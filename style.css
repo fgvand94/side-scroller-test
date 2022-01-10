@@ -1,0 +1,35 @@
+
+body {
+	padding: 0px;
+	margin: 0px;
+}
+
+.con {
+	position: absolute;
+	width: 100%;
+	height: 200px;
+	overflow: hidden;
+	bottom: 0px;
+}
+
+.base {
+	
+	height: 200px;
+	width: 5000px;
+	background-color: blue;
+}
+
+.block {
+	position: absolute;
+	height: 100px;
+	width: 50px;
+	background-color: green;
+	bottom: 200px;
+	
+
+}
+.button {
+	width: 50px;
+	height: 50px;
+}
+
