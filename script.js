@@ -4,6 +4,9 @@ side scroller with obsticals and ai using nothing but vanilla js if I can becaus
 I think it would be a good learning experience*/
 const block = document.querySelector('.block');
 const what = document.querySelector('.what');
+const allPlatforms = document.querySelector('#block');
+const allHoles = document.querySelector('#hole');
+/*const allPlatformWidth = allPlatforms.style.width;*/
 /*There might be a built in way to find the x cordinat of a div at any given point
 and if so i might use it but I think I might be able to create one. I mean I could
 just label the left and right point of every element but when the screen starts 
@@ -28,7 +31,18 @@ for everything would work, and it's part of what stopped all the jumping around
 and stuff. It doesn't work when for the first part of the function when you 
 initially press the up button because you have to essentially define the current
 height(it's not exaclty the current height that's sort of a misleading word) in 
-a previous function.......... */
+a previous function. because if you define it outside the jump logic but in the
+loop it just constantly resets every itself every frame and makes your jumps accelerate
+as your jumping and not have a consistent speed. That number is meant as a starting
+point to increment down or up by y but if the number itselft is changing then
+y will not go up or down by y linearly but accelerate majorly. also the array
+has to be defined at specific points-there's only to- where the loop is only that
+value for one frame. where down is false and then switches to true and where
+the jump reaches its maximum height and then can be used in all the other functions
+and then reset to empty and the chcheck turned to false when you hit the ground again.
+I might be able to define it initally outside of the loop just with the y value
+of new base height variable. Actually i might be able to basically get rid of it
+we'll see. */
 let chCheck = false;
 let inAir = false;
 
@@ -66,23 +80,44 @@ const move2 = (e) => {
  		right = false;
  	}
 }
-let baseHeight = 0;
+let baseHeight = 200;
+let noHoleHeight = 0;
 let blockX = 0;
-
+let xMaxLeft = 0;
+let xMaxRight = 0;
+let flat1Left = 0;
+let flat1Right = 0;
+let hole1Left = 0;
+let hole1Right = 0;
+let flat2Left = 0;
+let flat2Right = 0;
+/*This method is going to get insane when I start doing more complicated things
+and making the map bigger so i'll probably have to find something different but
+for now i'm just going to try and make it work like this and maybe that will give
+me better ideas going forward. If there was someway I could find the heigth of the
+div element at the current x position of the block that would make things much
+easier. I also need to find a dynamic way to not let the block pass the div margins
+when it falls into a hole and thinking of more complex levels i would need to find
+someway where it could dedect the left and right margin of smaller platforms and
+other objects in the environment so that it wouldn't be able to move passed them. */
 const platformXPostion = (shift, currentX) => {
-	let flat1Left = 0 + shift;
-	let flat1Right = 600 + shift;
-	let hole1Left = 600.00000000000000000001 + shift;
-	let hole1Right = 800 + shift;
-	let flat2Left = 800.00000000000000000001 + shift;
-	let flat2Right = 1600 + shift;
+	flat1Left = 0 + shift;
+	flat1Right = 600 + shift;
+	hole1Left = 600.00000000000000000001 + shift;
+	hole1Right = 800 + shift;
+	flat2Left = 800.00000000000000000001 + shift;
+	flat2Right = 1600 + shift;
 
 	if (currentX > flat1Left && currentX < flat1Right || currentX > flat2Left &&
 		currentX < flat2Right) {
 		baseHeight = 200;
-	} else if (currentX > hole1Left && currentX < hole1Right) {
+		noHoleHeight = 200;
+	} else if (currentX > hole1Left && currentX < hole1Right && inAir === false) {
 		baseHeight = 0;
-	};
+
+	} else if (currentX > hole1Left && currentX < hole1Right && inAir === true) {
+		baseHeight = baseHeight;
+	}
 }
 
 
@@ -112,7 +147,8 @@ const blockmove = () => {
 	
 	
 
-what.innerHTML = `${currentHeight[0]} ${down} ${yadanumber}`;
+what.innerHTML = `${currentHeight[0]} ${down} ${yadanumber} ${blockX} ${hole1Left} 
+${hole1Right}`;
 console.log(currentHeight[0]);
 console.log(yadanumber);
 console.log(y);
@@ -133,6 +169,15 @@ at the moment though.*/
 from it's heighest point to where it starts to drop seams kind of abrubt. Or something
 there's something off about that as well. */
 
+/*There's a problem with the block getting sort of stuck in y levels that aren't
+on a platfomr or at the bottom of a hole. I think this has something to do with the
+fact that............ actually idk i was thinking somehing about the 10/8 increment
+but i'm not sure i'll worry about that later*/
+/*I couldn't remember how i got it to stop auto jumpint when holding up. I think
+i just had up2 setting back to true at the end of the up !up2 function and removed
+it*/
+/*I don't know why I put so many down = false. I was trying to get to the next thing
+and didn't think about it enough. I'll worry about that later. */
 	if (up && up2) {
 		if (block.style.bottom < `${baseHeight + 120}px` && chCheck === false) {
 			console.log('yada');
@@ -150,24 +195,41 @@ there's something off about that as well. */
 
 		else if (block.style.bottom >= `${baseHeight + 120}px`) {
 		down = false;
-					currentHeight = [];
-			currentHeight.push(yadanumber);
+		currentHeight = [];
+		currentHeight.push(yadanumber);
 		up2 = false;
 		chCheck = true;
 		y = 0;
 	}
 };
 	if (up && !up2) {
-		if (block.style.bottom > `${baseHeight}px`){
+		if (block.style.bottom > `${baseHeight}px` ){
+
 				down = false;
 				y -= 8;
 				block.style.bottom = `${currentHeight[0] + y}px`;
 		}
 		if (block.style.bottom <= `${baseHeight}px`) {
+			 if (blockX >= hole1Left && blockX <= hole1Right) {
+			 	if (chCheck === true) {
+			 	console.log('yes');
+				down = false;
+				y -= 8;
+				block.style.bottom = `${currentHeight[0] + y}px`;
+				} else if (chCheck === false){
+			 	console.log('yes2');
+				down = false;
+				y -= 8;
+				block.style.bottom = `${baseHeight + y}px`;
+				}	 	
+			 } else if (blockX < hole1Left && blockX > hole1Right) {
+			 	console.log('no');
 			y = 0;
 			down = false;
 			currentHeight = [];
 			chCheck = false;
+			inAir = false;
+			}
 		}
 	};
 
@@ -192,7 +254,7 @@ there's something off about that as well. */
 			y = 0;
 			currentHeight = [];
 			chCheck = false;
-			up2 = true;
+			inAir = false;
 		};
 	};
 
