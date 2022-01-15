@@ -2,20 +2,34 @@
 body {
 	padding: 0px;
 	margin: 0px;
+	width: 5000px;
+	overflow: hidden;
 }
 
 .con {
 	position: absolute;
-	width: 100%;
+	width: 5000px;
 	height: 200px;
 	overflow: hidden;
 	bottom: 0px;
 }
 
 .base {
-	
+	display: inline-block;
 	height: 200px;
-	width: 5000px;
+	width: 600px;
+	background-color: blue;
+}
+
+.hole {
+	width: 200px;
+	display: inline-block;
+}
+
+.base2 {
+	display: inline-block;
+	width: 800px;
+	height: 200px;
 	background-color: blue;
 }
 
@@ -25,8 +39,6 @@ body {
 	width: 50px;
 	background-color: green;
 	bottom: 200px;
-	
-
 }
 .button {
 	width: 50px;
