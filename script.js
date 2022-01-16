@@ -137,7 +137,7 @@ other objects in the environment so that it wouldn't be able to move passed them
 		like this for now and decide later if i want to do that*/
 const onPlatformHeight = () => {
 	for (let k = 0; k < platformArrXGrouped[0].length; k+=2) {
-		if (hole === false && blockX >= platformArrXGrouped[0][k] && blockX <= 
+		if (hole === false && blockX >= platformArrXGrouped[0][k] -50.0000000001 && blockX <= 
 			platformArrXGrouped[0][k + 1]) {
 			what2.innerHTML = `${platformArrXGrouped[0][k]} 
 								${platformArrXGrouped[0][k + 1]}`;
@@ -357,12 +357,7 @@ ${xMaxLeft} ${nextRight} ${xMaxRight} ${baseHeight} ${hole}`;
 console.log(currentY);
 console.log(y);
 console.log(down);*/
-console.log(baseHeight);
-console.log(block.style.bottom);
-console.log(hole);
-console.log(blockX);
-console.log(xMaxLeft);
-console.log(xMaxRight);
+
 
 
 /*I'm going to eventually have to make this more dynamic and make everything not
@@ -588,6 +583,13 @@ and didn't think about it enough. I'll worry about that later. */
 	onPlatformHeight();
 
 	platformXPostion(0, blockX);
+
+	console.log(baseHeight);
+console.log(block.style.bottom);
+console.log(hole);
+console.log(blockX);
+console.log(xMaxLeft);
+console.log(xMaxRight);
 
 	/*I'll think about how to make the jump work tomorrow. I know i watched a video
 	doing it with canvas and everything but I don't really remember how he did it
