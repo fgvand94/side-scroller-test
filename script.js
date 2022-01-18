@@ -137,11 +137,27 @@ other objects in the environment so that it wouldn't be able to move passed them
 		like this for now and decide later if i want to do that*/
 const onPlatformHeight = () => {
 	for (let k = 0; k < platformArrXGrouped[0].length; k+=2) {
-		if (hole === false && blockX >= platformArrXGrouped[0][k] -50.0000000001 && blockX <= 
-			platformArrXGrouped[0][k + 1]) {
+		if (hole === false && blockX >= platformArrXGrouped[0][k] -50.0000000001 
+			&& blockX <= platformArrXGrouped[0][k + 1]) {
 			what2.innerHTML = `${platformArrXGrouped[0][k]} 
 								${platformArrXGrouped[0][k + 1]}`;
 			currentPlatY = platformArrY[k/2];
+			/*The below fixed most of the problems with the block slipping in below
+			the top of the platform because the maxx is based on if current Y is less
+			than plat Y and it wasn't working in cases where you got right at the boundary
+			for the next platform so hole === true bu the current plat Y didn't shift yet.
+			This turns true whenever it's supposed to now there's just one scenerio where
+			you drop 10 below playY right as you hit the boudary. It looks like curreny
+			is switching 1 frame to late. */
+		} else if (hole === true) {
+			if (blockX === platformArrXGrouped[0][k] -50.0000000001 || blockX ===
+				platformArrXGrouped[0][k + 1]) {
+				console.log('platY hole true');
+				currentPlatY = platformArrY[k/2];
+			} else {
+				continue;
+			};
+
 		} else {
 			continue;
 		};
@@ -166,10 +182,14 @@ const closestPlatformLeft = () => {
 	you wont be able to go left again.*/
 	for (let i = 0; i < platformArrXGrouped[1].length; i+=2) {
 		
-		if (hole === true && blockX >= platformArrXGrouped[1][i] && blockX <= 
+		if (hole && blockX >= platformArrXGrouped[1][i] && blockX <= 
 			platformArrXGrouped[1][i + 1]) {
 			nextLeft = platformArrXGrouped[1][i]-.0000000001;
+
 		break;
+		} else if (hole && blockX === platformArrXGrouped[i]) {
+			nextLeft = platformArrXGrouped[1][i]-.0000000001;
+			break;
 		} else {
 			continue;
 		};
@@ -184,11 +204,15 @@ const closestPlatformLeft = () => {
 	character without defining all the locaitons like this. I'm sure in other engines and
 	things there is but js wasn't really designed for that as far as i'm awar
 	so idk if there is an easier way to do it or not.*/
-	if (nextLeft !== 0 && currentY < currentPlatY) {
+	onPlatformHeight();
+
+
+	if (hole && currentY < currentPlatY && nextLeft !== 0) {
+		inAir = true;
 		xMaxLeft = nextLeft;
 	}
 
-	if (hole === false) {
+	if (!hole) {
 		nextLeft = 0;
 		xMaxLeft = 0;
 	}
@@ -197,19 +221,31 @@ const closestPlatformLeft = () => {
 
 const closestPlatformRight = () => {
 		for (let j = 0; j < platformArrXGrouped[1].length; j+=2) {
-		if (hole === true && blockX >= platformArrXGrouped[1][j] && blockX <= 
+		if (hole && blockX >= platformArrXGrouped[1][j] && blockX <= 
 			platformArrXGrouped[1][j + 1]) {
 			nextRight = platformArrXGrouped[1][j + 1];
+			console.log('nextRight');
 		break;
+		/*the below is uneccasary lol. I would trigger true at the same instance above
+		because it's still >= [1][j];*/
+		} else if (hole && blockX === platformArrXGrouped[1][j + 1]) {
+			nextRight = platformArrXGrouped[1][j + 1];
+			console.log('nextRight2');
+			break;
 		} else {
 			continue;
 		};
 	};
-		if (nextRight !== 0 && currentY < currentPlatY) {
+
+		onPlatformHeight();
+
+		if (hole && currentY < currentPlatY && nextRight !== 0) {
+			inAir = true;
+			console.log('nextRight3');
 		xMaxRight = nextRight - 50;
 	}
 
-	if (hole === false) {
+	if (!hole) {
 		nextRight = 0;
 		xMaxRight = 0;
 	}
@@ -262,12 +298,14 @@ const platformXPostion = (shift, currentX) => {
 		baseHeight = 0;
 
 	} else if (hole === true && inAir === true) {
-		baseHeight = baseHeight;
+		baseHeight = currentPlatY;
 	};
 };
 
 
 const blockmove = () => {
+
+
 	/*I got the left and the right movements making the map shift and also stoped
 	the block when he reaches the left end. I got the hole glitches fixed mostly
 	although I think it could maybe be better but before I do this i'm going to
@@ -336,13 +374,21 @@ const blockmove = () => {
 		block.style.left = `${x}px`;
 		blockX = x;		
 	};
+
+	holeCheck();
+	closestPlatformLeft();
+	closestPlatformRight();
+	platformXPostion(0, blockX);
 	/*I was going to base this on the length of the string of block.style.bottom
 	but if it's done properly itll always be 5.*/
 	
+	const getCurrentY = () => {
 	yada = block.style.bottom;
 	yadastring = yada.toString();
 	yadasplit = yadastring.split('p');
-	currentY = Number(yadasplit[0]);
+	currentY = Number(yadasplit[0]);		
+	}
+	getCurrentY();
 	
 	/*I wansn't thinking that every time the loop started down would restart to
 	false here so It needs to be outside the loop*/
@@ -412,9 +458,13 @@ and didn't think about it enough. I'll worry about that later. */
 				down = false;
 				y -= 10;
 				block.style.bottom = `${heightCheck[0] + y}px`;
+				onPlatformHeight();
+				getCurrentY();
+				closestPlatformLeft();
+				closestPlatformRight();
+				platformXPostion(0, blockX);
 
-		}
-		if (currentY <= baseHeight) {
+		} else if (currentY <= baseHeight) {
 			console.log('2.2');
 			/* I need to make it so when falling in the hole you cant move left
 			or right past the boundary of the platforms. I could just set something
@@ -434,7 +484,14 @@ and didn't think about it enough. I'll worry about that later. */
 				down = false;
 				y -= 10;
 				block.style.bottom = `${heightCheck[0] + y}px`;
+				onPlatformHeight();
+				getCurrentY();
+				closestPlatformLeft();
+				closestPlatformRight();
+				
+				platformXPostion(0, blockX);
 					if (currentY < currentPlatY) {
+						inAir = true;
 						console.log('2.2.1.1.1');
 						if (xMaxLeft > 0) {
 							console.log('2.2.1.1.1.1');
@@ -455,6 +512,7 @@ and didn't think about it enough. I'll worry about that later. */
 				y -= 10;
 				block.style.bottom = `${baseHeight + y}px`;
 					if (currentY < currentPlatY) {
+						inAir = true;
 						if (xMaxLeft > 0) {
 							if (blockX <= xMaxLeft) {
 								console.log('3.3.1');
@@ -468,7 +526,9 @@ and didn't think about it enough. I'll worry about that later. */
 						};
 					};
 				};	 	
-			 };/* else if (currentY > currentPlatY && blockX < hole1Left || blockX > hole1Right) {
+			 };
+
+			 /* else if (currentY > currentPlatY && blockX < hole1Left || blockX > hole1Right) {
 			 	console.log('no');
 			y = 0;
 			down = false;
@@ -508,15 +568,26 @@ and didn't think about it enough. I'll worry about that later. */
 			block.style.bottom = `${heightCheck[0] + y}px`;
 			down = true;
 			up2 = false;
+			/*hole should still be true until 760. which it is. at 750 your right
+			touching the edge border of platform two. The second you hit this border
+			currentplatY should change. and that should happen before these below functions
+			are triggered*/
 		} else if (currentY > baseHeight && down === true) {
 			console.log('3.2');
 			y -= 10;
 			block.style.bottom = `${heightCheck[0] + y}px`;
+				onPlatformHeight();
+				getCurrentY();
+				closestPlatformLeft();
+				closestPlatformRight();
+				
+				platformXPostion(0, blockX);
 			/*For some reason I was thinking that the if hole ===true in the below
 			was to make it so you didn't flot on top of the hole so i wasn't putting
 			this below. I forgot though it was actually just so you'd fall below 0 and
 			go out of frame lawl.*/
 				if (currentY < currentPlatY) {
+					inAir = true;
 					if (xMaxLeft > 0) {
 						if (blockX <= xMaxLeft) {
 							console.log('3.3.1');
@@ -543,7 +614,13 @@ and didn't think about it enough. I'll worry about that later. */
 				console.log('3.3');
 				y -= 10;
 				block.style.bottom = `${heightCheck[0] + y}px`;
+					onPlatformHeight();
+					getCurrentY();
+					closestPlatformLeft();
+					closestPlatformRight();
+					platformXPostion(0, blockX);
 					if (currentY < currentPlatY) {
+						inAir = true;
 						if (xMaxLeft > 0) {
 							if (blockX <= xMaxLeft) {
 								console.log('3.3.1');
@@ -569,24 +646,38 @@ and didn't think about it enough. I'll worry about that later. */
 			};
 		};
 	};
-
+/*Resets most things back to normal. up2 isn't because if your holding up and it
+restarts it'll auto jump. and chCheck isn't because once that's set and changes
+where it needs to you don't really need it to reset. If you do it causes problems
+ with the 2.x functions because if chCheck goes to false and again if your holding
+ up the whole way through it won't get redifined so if you then hit another wall it
+ will make currentY jump up by however much the next platfrom is because the coresponding
+  change in base height when you hit the new wall because y change in there is based
+  on baseHeight and not height check. */
 	if (currentY < -100) {
+	y = 0;
+	left2 = true;
+	right2 = true;
+	down = true;
+	currentY = 200;
+	currentPlatY = 200;	
+	heightCheck = [200];
+	inAir = false;
 	x = 0;
 	block.style.left = `${x}px`;
 	blockX = x;
 	block.style.bottom = '200px';
 	};
 
-	holeCheck();
-	closestPlatformLeft();
-	closestPlatformRight();
-	onPlatformHeight();
 
-	platformXPostion(0, blockX);
 
-	console.log(baseHeight);
+console.log(baseHeight);
 console.log(block.style.bottom);
+console.log(y);
+console.log(currentY);
+console.log(currentPlatY);
 console.log(hole);
+console.log(inAir);
 console.log(blockX);
 console.log(xMaxLeft);
 console.log(xMaxRight);
