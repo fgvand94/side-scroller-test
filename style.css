@@ -18,7 +18,7 @@ body {
 	left: 0px;
 
 }
-
+/*>= 0 <= 600*/
 .base {
 	display: inline-block;
 	height: 200px;
@@ -34,7 +34,7 @@ body {
 #hole {
 	display: inline-block;
 }
-
+/* hole 1 > 600 <= 800 hole 2 >1000 <= 1200*/
 .hole, .hole2 {
 	width: 200px;
 	display: inline-block;
@@ -42,25 +42,25 @@ body {
 	height: 50px;
 	background-color: red;*/
 }
-
+/*>1700 <= 1900*/
 .hole3 {
-	width: 300px;
+	width: 200px;
 }
-
+/*> 800 <= 1000*/
 .base2  {
 	display: inline-block;
 	width: 200px;
 	height: 240px;
 	background-color: blue;
 }
-
+/*>1200 <=1700*/
 .base3 {
 	display: inline-block;
 	width: 500px;
 	height: 200px;
 	background-color: blue;
 }
-
+/*>1900 <= 2000*/
 .base4 {
 	height: 200px;
 	width: 100px;
