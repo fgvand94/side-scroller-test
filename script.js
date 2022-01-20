@@ -195,15 +195,15 @@ const closestPlatformLeft = () => {
 	you wont be able to go left again.*/
 	for (let i = 0; i < platformArrXGrouped[1].length; i+=2) {
 		
-		if (hole && blockX >= platformArrXGrouped[1][i]-.0000000001 && blockX <= 
+		if (hole && blockX >= Math.floor(platformArrXGrouped[1][i]) && blockX <= 
 			platformArrXGrouped[1][i + 1]) {
-			nextLeft = platformArrXGrouped[1][i]-.0000000001;
+			nextLeft = Math.floor(platformArrXGrouped[1][i]);
 
 		break;
-		} else if (hole && blockX === platformArrXGrouped[i]) {
+		/*} else if (hole && blockX === platformArrXGrouped[i]) {
 			nextLeft = platformArrXGrouped[1][i]-.0000000001;
 			break;
-		} else {
+		*/} else {
 			continue;
 		};
 	};
@@ -234,7 +234,7 @@ const closestPlatformLeft = () => {
 
 const closestPlatformRight = () => {
 		for (let j = 0; j < platformArrXGrouped[1].length; j+=2) {
-		if (hole && blockX >= platformArrXGrouped[1][j]-.0000000001 && blockX <= 
+		if (hole && blockX >= Math.floor(platformArrXGrouped[1][j]) && blockX <= 
 			platformArrXGrouped[1][j + 1]) {
 			nextRight = platformArrXGrouped[1][j + 1];
 			console.log('nextRight');
@@ -265,9 +265,9 @@ const closestPlatformRight = () => {
 }
 
 const holeCheck = () => {
-	if (blockX >= hole1Left -.0000000001 && blockX <= hole1Right -50 
-		|| blockX >= hole2Left -.0000000001 && blockX <= hole2Right - 50
-		|| blockX >= hole3Left -.0000000001 && blockX <= hole3Right - 50) {
+	if (blockX >= Math.floor(hole1Left)  && blockX <= hole1Right -50 
+		|| blockX >= Math.floor(hole2Left) && blockX <= hole2Right - 50
+		|| blockX >= Math.floor(hole3Left) && blockX <= hole3Right - 50) {
 		hole = true;
 	} else {
 		hole = false;
@@ -736,6 +736,11 @@ console.log(inAir);
 console.log(blockX);
 console.log(nextLeft);
 console.log(xMaxLeft);
+console.log(flat2Right);
+console.log(platformArrXGrouped[0][3]);
+console.log(platformArrXGrouped[1][2]);
+console.log(hole2Left);
+console.log(mapXMap);
 console.log(xMaxRight);
 
 
