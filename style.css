@@ -44,7 +44,11 @@ body {
 }
 /*>1700 <= 1900*/
 .hole3 {
-	width: 200px;
+	width: 280px;
+}
+
+.hole4 {
+	width: 250px;
 }
 /*> 800 <= 1000*/
 .base2  {
@@ -66,6 +70,11 @@ body {
 	width: 100px;
 }
 
+.base5 {
+	width: 500px;
+	height: 220px;
+}
+
 .block {
 	position: absolute;
 	height: 100px;
@@ -73,6 +82,16 @@ body {
 	background-color: green;
 	bottom: 200px;
 	left: 0px;
+
+}
+
+.ai1 {
+	position: absolute;
+	height: 50px;
+	width: 50px;
+	background-color: red;
+	bottom: 220px;
+	
 }
 
 

@@ -8,6 +8,7 @@ const what2 = document.querySelector('.what2');
 const allPlatforms = document.querySelector('#block');
 const allHoles = document.querySelector('#hole');
 const map = document.querySelector('.con');
+const ai1 = document.querySelector('.ai1');
 /*const allPlatformWidth = allPlatforms.style.width;*/
 /*There might be a built in way to find the x cordinat of a div at any given point
 and if so i might use it but I think I might be able to create one. I mean I could
@@ -25,6 +26,7 @@ let left2 = true;
 let up = false;
 let up2 = true;
 let down = false;
+let up3 = true;
 /*For some reason having current height[0] defined off the bat, which I was going
 to do to try to get ride of the chCheck, makes the first !up function trigger and
 drops the block down 8 pixels. I'm not 100% sure why but I'm going to do other things
@@ -36,6 +38,13 @@ let xMap = 0;
 block.style.bottom = '200px';
 block.style.left = '0px';
 
+
+/*These aren't positioned relatively or absolutely with left or some other
+move decleration there just where they are as inline block elements between
+the widths of eachother but I should try to find a way to find the x cordonite
+regardless if it's possible so I can replace these with that and not have to
+do all the initial calculations myself for the x position of each of these.
+idk if that's a function that html/css/js has though but i'll look around*/
 let	flat1Left = 0;
 let	flat1Right = 600;
 let flat1Top = 200;
@@ -50,19 +59,35 @@ let	flat3Left = 1200.0000000001;
 let	flat3Right = 1700;
 let flat3Top = 200;
 let hole3Left = 1700.0000000001;
-let hole3Right = 1900;
-let flat4Left = 1900.0000000001;
-let flat4Right = 2000;
+let hole3Right = 1980;
+let flat4Left = 1980.0000000001;
+let flat4Right = 2080;
 let flat4Top = 200;
+let hole4Left = 2080.0000000001;
+let hole4Right = 2330;
+let flat5Left = 2330.0000000001;
+let flat5Right = 2830;
+let flat5Top = 220; 
+let ai1left = 2580;
 let platformArrX = [flat1Left, flat1Right, hole1Left, hole1Right, flat2Left, flat2Right
 , hole2Left, hole2Right, flat3Left, flat3Right, hole3Left, hole3Right, flat4Left,
 flat4Right];
 let platformArrXGrouped = [[flat1Left, flat1Right, flat2Left, flat2Right,
-flat3Left, flat3Right, flat4Left, flat4Right], [hole1Left, hole1Right, hole2Left, hole2Right,
-hole3Left, hole3Right]];
-let platformArrY = [flat1Top, flat2Top, flat3Top, flat4Top];
-console.log(platformArrX[1]);
-console.log(platformArrX[3]);
+flat3Left, flat3Right, flat4Left, flat4Right, flat5Left, flat5Right], [hole1Left, hole1Right, hole2Left, hole2Right,
+hole3Left, hole3Right, hole4Left, hole4Right]];
+let platformArrY = [flat1Top, flat2Top, flat3Top, flat4Top, flat5Top];
+let aiArr = [ai1left];
+
+let maxJump = 140;/*I'll probably put some kind of option menu at the top that
+allows you to adjust the physics. jump height and speed etc. I'll make it increment
+in tens for now but I also should probably find a way to make all this work
+without having things in multiples of the speed that it's in so it's more 
+flexible. I'm just trying to get the hang of it like this for now. I could
+also maybe make the block stay for a frame or two at max height to emulate a
+hangtime type of effect idk. Maybe I'll play with the speed/acceleration as
+it goes up and down but for now this is fine.*/
+let minJump = 30;/*I'm probobly going to implement a minimum jump heigth
+at some point later*/
 /*chCheck is just to check if i'm using the current heigth array to define the
 y position. This is nececary because while defining the current height on the y
 for everything would work, and it's part of what stopped all the jumping around 
@@ -129,6 +154,10 @@ let nextLeft = 0;
 let nextRight = 0;
 let currentY = 200;
 let currentPlatY = 200;
+
+let ai1BaseHeight = 220;
+
+
 /*This method is going to get insane when I start doing more complicated things
 and making the map bigger so i'll probably have to find something different but
 for now i'm just going to try and make it work like this and maybe that will give
@@ -265,9 +294,12 @@ const closestPlatformRight = () => {
 }
 
 const holeCheck = () => {
+	/*I should make a loop that just loops through the hole array to find these
+	so I don't have to add a new one here every time. */
 	if (blockX >= Math.floor(hole1Left)  && blockX <= hole1Right -50 
 		|| blockX >= Math.floor(hole2Left) && blockX <= hole2Right - 50
-		|| blockX >= Math.floor(hole3Left) && blockX <= hole3Right - 50) {
+		|| blockX >= Math.floor(hole3Left) && blockX <= hole3Right - 50
+		|| blockX >= Math.floor(hole4Left) && blockX <= hole4Right - 50) {
 		hole = true;
 	} else {
 		hole = false;
@@ -293,6 +325,12 @@ const bHCall = () => {
 };
 
 const platformXPostion = (shift) => {
+	/*it might be harder but I wonder if I could make a loop or something here
+	to that would do all this without having to add them manually. So all I do
+	is add them at the top of the page and it would be good to go. I probably could
+	just make two loops one for hole and one for grouped and say something like
+	flati+1left = faltileft++1shift and platfromarrXgrouped[0].splice(i, 1, flati+1left)
+	etc and just say toString on the i + 1 in the variable name*/
 	flat1Left = 0 + shift;
 	platformArrXGrouped[0].splice(0, 1, flat1Left);
 	flat1Right = 600 + shift;
@@ -328,10 +366,22 @@ const platformXPostion = (shift) => {
 	platformArrXGrouped[0].splice(5, 1, flat3Right);
 	hole3Left = 1700.0000000001 + shift;
 	platformArrXGrouped[1].splice(4, 1, hole3Left);
-    hole3Right = 1900 + shift;
+    hole3Right = 1980 + shift;
     platformArrXGrouped[1].splice(5, 1, hole3Right);
-	flat4Left = 1900.0000000001 + shift;
-	flat4Right = 2000 + shift;
+	flat4Left = 1980.0000000001 + shift;
+	platformArrXGrouped[0].splice(6, 1, flat4Left);
+	flat4Right = 2080 + shift;
+	platformArrXGrouped[0].splice(7, 1, flat4Right);
+	hole4Left = 2080.0000000001 + shift;
+	platformArrXGrouped[1].splice(6, 1, hole4Left);
+	hole4Right = 2330 + shift;
+	platformArrXGrouped[1].splice(7, 1, hole4Right);
+	flat5Left = 2330.0000000001 + shift;
+	platformArrXGrouped[0].splice(8, 1, flat5Left);
+	flat5Right = 2830 + shift;
+	platformArrXGrouped[0].splice(9, 1, flat5Right);
+	ai1left = 2580 + shift;
+	
 
 
 };
@@ -343,7 +393,7 @@ const platformXPostion = (shift) => {
 	currentY = Number(yadasplit[0]);		
 	};
 
-
+	let loopCount = 0;
 const blockmove = () => {
 
 				onPlatformHeight();
@@ -429,8 +479,7 @@ const blockmove = () => {
 	
 /*	${heightCheck[0]} ${down} ${currentY} ${blockX} ${platformArrXGrouped[0][4]} ${platformArrXGrouped[0][5]}*/
 
-what.innerHTML = `${baseHeight} ${currentPlatY} ${currentY} ${nextLeft} 
-${xMaxLeft} ${nextRight} ${xMaxRight} ${baseHeight} ${hole} ${inAir}`;
+
 /*console.log(heightCheck[0]);
 console.log(currentY);
 console.log(y);
@@ -462,19 +511,19 @@ i just had up2 setting back to true at the end of the up !up2 function and remov
 it*/
 /*I don't know why I put so many down = false. I was trying to get to the next thing
 and didn't think about it enough. I'll worry about that later. */
-	if (up && up2) {
-		if (currentY < baseHeight + 120 && chCheck === false) {
+	if (up && up2 && up3) {
+		if (currentY < baseHeight + maxJump && chCheck === false) {
 			console.log('1.1');
 			inAir = true;				
 			down = false;
 		y += 10;
 		block.style.bottom = `${baseHeight + y}px`;
-	} else if (currentY < baseHeight + 120 && chCheck === true) {
+	} else if (currentY < baseHeight + maxJump && chCheck === true) {
 		console.log('1.2');						
 		down = false;
 		y += 10;
 		block.style.bottom = `${heightCheck[0] + y}px`;
-	}  else if (currentY >= baseHeight + 120) {
+	}  else if (currentY >= baseHeight + maxJump) {
 		console.log('1.3');
 		down = false;
 		heightCheck = [];
@@ -484,7 +533,7 @@ and didn't think about it enough. I'll worry about that later. */
 		y = 0;
 	};
 };
-	if (up && !up2) {
+	if (up && !up2 && up3) {
 		if (currentY > baseHeight ){
 				console.log('2.1');
 				down = false;
@@ -575,7 +624,7 @@ and didn't think about it enough. I'll worry about that later. */
 		};
 	};
 
-	if (!up) { console.log('also three something');
+	if (!up && up3) { console.log('also three something');
 		
 		if (currentY > baseHeight && down === false) {
 			
@@ -700,10 +749,11 @@ where it needs to you don't really need it to reset. If you do it causes problem
  will make currentY jump up by however much the next platfrom is because the coresponding
   change in base height when you hit the new wall because y change in there is based
   on baseHeight and not height check. */
-	if (currentY < -100) {
-	y = 0;
+  	const restart = () => {
+ 	y = 0;
 	left2 = true;
 	right2 = true;
+	up3 = true;
 	down = true;
 	currentY = 200;
 	currentPlatY = 200;	
@@ -717,6 +767,42 @@ where it needs to you don't really need it to reset. If you do it causes problem
 	map.style.left = `${xMap}px`;
 	mapXMap = xMap;
 	platformXPostion(mapXMap);
+  	};
+
+  	const hitAIAnimation = () => {
+  		let iteration = 0;
+  		const invisible = () => {
+  			block.style.visibility = 'hidden';
+  			setTimeout(visible, 50);
+  		}
+
+  		const visible = () => {
+  			iteration ++
+  			block.style.visibility = 'initial';
+  			if (iteration < 5) {
+  				setTimeout(invisible, 50);
+  			} else {
+  				iteration = 0;
+  				restart();
+  			}
+  		}
+
+  		setTimeout(invisible, 50);
+  	}
+	if (currentY < -100) {
+		restart();
+	};
+	/*Instead of instantly returning to the beggining here I should play
+	some kind of animation where the block falls off the map or does something*/
+	if (currentY <= ai1BaseHeight + 50) {
+
+		if (blockX >= ai1left - 50 && blockX <= ai1left + 50) {
+			up3 = false;
+			left2 = false;
+			right2 = false;
+
+			hitAIAnimation();
+		};
 	};
 
 				onPlatformHeight();
@@ -725,6 +811,28 @@ where it needs to you don't really need it to reset. If you do it causes problem
 				closestPlatformRight();
 				
 				bHCall();
+
+
+
+	if (loopCount < 60) {
+		ai1left += 3;
+		loopCount ++;
+	} else if (loopCount >= 60 && loopCount <= 100) {
+		loopCount++;
+	} else if (loopCount > 100 && loopCount <= 160) {
+		ai1left -= 3;
+		loopCount++;
+	}  else if (loopCount > 160 && loopCount <= 200) {
+		loopCount ++;
+	} else if (loopCount > 200) {
+		loopCount = 0;
+	};
+
+	ai1.style.left = `${ai1left}px`;
+
+	what.innerHTML = `${baseHeight} ${currentPlatY} ${currentY} ${nextLeft} 
+${xMaxLeft} ${nextRight} ${xMaxRight} ${baseHeight} ${hole} ${inAir} ${ai1.style.left}
+${ai1left} ${blockX} ${loopCount}`;
 
 console.log(baseHeight);
 console.log(block.style.bottom);
