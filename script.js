@@ -27,6 +27,7 @@ let up = false;
 let up2 = true;
 let down = false;
 let up3 = true;
+let mapMoving = false;
 /*For some reason having current height[0] defined off the bat, which I was going
 to do to try to get ride of the chCheck, makes the first !up function trigger and
 drops the block down 8 pixels. I'm not 100% sure why but I'm going to do other things
@@ -68,7 +69,7 @@ let hole4Right = 2330;
 let flat5Left = 2330.0000000001;
 let flat5Right = 2830;
 let flat5Top = 220; 
-let ai1left = 2580;
+let ai1left = 2465;
 let platformArrX = [flat1Left, flat1Right, hole1Left, hole1Right, flat2Left, flat2Right
 , hole2Left, hole2Right, flat3Left, flat3Right, hole3Left, hole3Right, flat4Left,
 flat4Right];
@@ -131,6 +132,7 @@ happen sometime when you press left to right to fast */
 const move2 = (e) => {
  	if (e.keyCode === 37) {
  		left = false;
+ 		mapMoving = false;
  	}
 
  	 	if (e.keyCode === 38) {
@@ -139,6 +141,7 @@ const move2 = (e) => {
 
  	if (e.keyCode === 39) {
  		right = false;
+ 		mapMoving = false;
  	}
 };
 /*I could maybe combine currentplaty and base heigth I'm going to wait htough*/
@@ -156,6 +159,7 @@ let currentY = 200;
 let currentPlatY = 200;
 
 let ai1BaseHeight = 220;
+let ai1Move = 0;
 
 
 /*This method is going to get insane when I start doing more complicated things
@@ -325,6 +329,7 @@ const bHCall = () => {
 };
 
 const platformXPostion = (shift) => {
+
 	/*it might be harder but I wonder if I could make a loop or something here
 	to that would do all this without having to add them manually. So all I do
 	is add them at the top of the page and it would be good to go. I probably could
@@ -380,7 +385,8 @@ const platformXPostion = (shift) => {
 	platformArrXGrouped[0].splice(8, 1, flat5Left);
 	flat5Right = 2830 + shift;
 	platformArrXGrouped[0].splice(9, 1, flat5Right);
-	ai1left = 2580 + shift;
+
+	ai1left = 2465 + shift + ai1Move;
 	
 
 
@@ -402,6 +408,9 @@ const blockmove = () => {
 				closestPlatformRight();
 				
 				bHCall();
+
+
+
 	/*I got the left and the right movements making the map shift and also stoped
 	the block when he reaches the left end. I got the hole glitches fixed mostly
 	although I think it could maybe be better but before I do this i'm going to
@@ -413,10 +422,12 @@ const blockmove = () => {
 	if (right && right2) {
 	
 		if (blockX <= 750) {
+	mapMoving = false;
 	x += 10;
 	block.style.left = `${x}px`;
 	blockX = x;
 	} else {
+	mapMoving = true;
 	xMap -= 10;
 	map.style.left = `${xMap}px`;
 	mapXMap = xMap;
@@ -437,6 +448,7 @@ const blockmove = () => {
 	if (left && left2) {
 
 		if (mapXMap >= 0) {
+			mapMoving = false;
 			if (blockX >= 10) {
 		x -= 10;
 		block.style.left = `${x}px`;
@@ -444,10 +456,12 @@ const blockmove = () => {
 		};
 	} else if (mapXMap < 0) {
 		if (blockX >= 200) {
+	mapMoving = false;
 	x -= 10;
 	block.style.left = `${x}px`;
 	blockX = x;			
 		} else if (blockX < 200) {
+		mapMoving = true;
 		xMap += 10;
 		map.style.left = `${xMap}px`;
 		mapXMap = xMap;
@@ -459,6 +473,25 @@ const blockmove = () => {
 			/*x -= 10;
 		block.style.left = `${x}px`;
 		blockX = x;*/		
+	};
+
+				if (mapMoving) {
+
+					if (loopCount < 60) {
+			ai1Move += 3;
+			loopCount ++;
+		} else if (loopCount >= 60 && loopCount <= 100) {
+			loopCount++;
+			ai1Move = ai1Move;
+		} else if (loopCount > 100 && loopCount <= 160) {
+			ai1Move -= 3;
+			loopCount++;
+		}  else if (loopCount > 160 && loopCount <= 200) {
+			loopCount ++;
+			ai1Move = ai1Move;
+		} else if (loopCount > 200) {
+			loopCount = 0;
+		}
 	};
 
 	holeCheck();
@@ -784,7 +817,7 @@ where it needs to you don't really need it to reset. If you do it causes problem
   			} else {
   				iteration = 0;
   				restart();
-  			}
+  			};
   		}
 
   		setTimeout(invisible, 50);
@@ -812,28 +845,48 @@ where it needs to you don't really need it to reset. If you do it causes problem
 				
 				bHCall();
 
+	if (!mapMoving) {
+		/*ai1Move = 0;*/
+		if (loopCount < 60) {
+			ai1Move += 3;
+			ai1left += 3;
+			loopCount ++;
+		} else if (loopCount >= 60 && loopCount <= 100) {
+			ai1Move = ai1Move;
+			loopCount++;
+		} else if (loopCount > 100 && loopCount <= 160) {
+			ai1Move -= 3;
+			ai1left -= 3;
+			loopCount++;
+		}  else if (loopCount > 160 && loopCount <= 200) {
+			ai1Move = ai1Move;
+			loopCount ++;
+		} else if (loopCount > 200) {
+			loopCount = 0;
+		};
 
-
-	if (loopCount < 60) {
-		ai1left += 3;
-		loopCount ++;
-	} else if (loopCount >= 60 && loopCount <= 100) {
-		loopCount++;
-	} else if (loopCount > 100 && loopCount <= 160) {
-		ai1left -= 3;
-		loopCount++;
-	}  else if (loopCount > 160 && loopCount <= 200) {
-		loopCount ++;
-	} else if (loopCount > 200) {
-		loopCount = 0;
-	};
+	}/*	else if (!right2) {
+				if (loopCount < 60) {
+			ai1left += 3;
+			loopCount ++;
+		} else if (loopCount >= 60 && loopCount <= 100) {
+			loopCount++;
+		} else if (loopCount > 100 && loopCount <= 160) {
+			ai1left -= 3;
+			loopCount++;
+		}  else if (loopCount > 160 && loopCount <= 200) {
+			loopCount ++;
+		} else if (loopCount > 200) {
+			loopCount = 0;
+		};
+	};*/
 
 	ai1.style.left = `${ai1left}px`;
-
-	what.innerHTML = `${baseHeight} ${currentPlatY} ${currentY} ${nextLeft} 
-${xMaxLeft} ${nextRight} ${xMaxRight} ${baseHeight} ${hole} ${inAir} ${ai1.style.left}
-${ai1left} ${blockX} ${loopCount}`;
-
+/*${baseHeight} ${currentPlatY} ${currentY} ${nextLeft} 
+${xMaxLeft} ${nextRight} ${xMaxRight} ${baseHeight} ${hole} ${inAir}*/
+	what.innerHTML = ` ${ai1.style.left}
+${ai1left} ${blockX} ${loopCount} ${ai1Move}`;
+/*
 console.log(baseHeight);
 console.log(block.style.bottom);
 console.log(y);
@@ -849,7 +902,9 @@ console.log(platformArrXGrouped[0][3]);
 console.log(platformArrXGrouped[1][2]);
 console.log(hole2Left);
 console.log(mapXMap);
-console.log(xMaxRight);
+console.log(xMaxRight);*/
+console.log(ai1left);
+console.log(mapMoving);
 
 
 
