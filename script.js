@@ -28,6 +28,8 @@ let up2 = true;
 let down = false;
 let up3 = true;
 let mapMoving = false;
+let hitAnimation = false;
+  		let iteration = 0;
 /*For some reason having current height[0] defined off the bat, which I was going
 to do to try to get ride of the chCheck, makes the first !up function trigger and
 drops the block down 8 pixels. I'm not 100% sure why but I'm going to do other things
@@ -783,6 +785,11 @@ where it needs to you don't really need it to reset. If you do it causes problem
   change in base height when you hit the new wall because y change in there is based
   on baseHeight and not height check. */
   	const restart = () => {
+  		if (hitAnimation) {
+  			requestAnimationFrame(blockmove);
+  		};
+
+  	hitAnimation = false;
  	y = 0;
 	left2 = true;
 	right2 = true;
@@ -801,28 +808,51 @@ where it needs to you don't really need it to reset. If you do it causes problem
 	mapXMap = xMap;
 	platformXPostion(mapXMap);
   	};
-
+/*I'm actually not to sure why this restarts most of the time before the animation
+finishes. I'd be fine with it, actually I kind of like it it's just not consistant
+and someitmes it finishes compleatly before it restarts
+It seems like loop count goes up even when this animations happening which
+tells me that once hit AI animation is called it continues running the loop and doesn't
+stop to wait for the hole animation to run. it logs invisible multiple times before
+logging visible. I would think that might mean that the main loop continues to run
+but 3.1 and all those other things don't log inbetween like they would if that 
+was the case. I'm not sure why that happens. also for some reason after invisible
+3 goes and iteration should  restart and the loop should stop it still runs a few
+times which is why i'm getting the effect of it still blinking after restart. on the
+other hand it is logging true everytime so it must be running the main loop. it's
+just not executing any of the other functions. saying if hit animation = false then
+do the loop works other than that when you restart for some reason the ai block is
+way back at the start of the map and isn't moving. also you can't move the block
+when it restarts. I'm assuming because the animation loop can't get called.*/
   	const hitAIAnimation = () => {
-  		let iteration = 0;
+  		hitAnimation = true;
+
+  		console.log(iteration);
   		const invisible = () => {
+  			console.log('invisible');
   			block.style.visibility = 'hidden';
   			setTimeout(visible, 50);
   		}
 
   		const visible = () => {
+  			console.log('visible1');
+  			
   			iteration ++
   			block.style.visibility = 'initial';
   			if (iteration < 5) {
+  				console.log('visible2');
   				setTimeout(invisible, 50);
   			} else {
+  				console.log('visible3');
   				iteration = 0;
   				restart();
   			};
-  		}
+  		};
 
   		setTimeout(invisible, 50);
   	}
 	if (currentY < -100) {
+		console.log('1');
 		restart();
 	};
 	/*Instead of instantly returning to the beggining here I should play
@@ -885,7 +915,7 @@ where it needs to you don't really need it to reset. If you do it causes problem
 /*${baseHeight} ${currentPlatY} ${currentY} ${nextLeft} 
 ${xMaxLeft} ${nextRight} ${xMaxRight} ${baseHeight} ${hole} ${inAir}*/
 	what.innerHTML = ` ${ai1.style.left}
-${ai1left} ${blockX} ${loopCount} ${ai1Move}`;
+${ai1left} ${blockX} ${loopCount} ${ai1Move} ${currentY}`;
 /*
 console.log(baseHeight);
 console.log(block.style.bottom);
@@ -902,9 +932,10 @@ console.log(platformArrXGrouped[0][3]);
 console.log(platformArrXGrouped[1][2]);
 console.log(hole2Left);
 console.log(mapXMap);
-console.log(xMaxRight);*/
+console.log(xMaxRight);
 console.log(ai1left);
-console.log(mapMoving);
+console.log(mapMoving);*/
+console.log(hitAnimation);
 
 
 
@@ -918,8 +949,10 @@ console.log(mapMoving);
 	it reaches that max height. I'll also have to make it so the jump animation is self contained
 	in some way so you can't just hold the up button and float at the max heigth*/
 
-
+	if (!hitAnimation) {
 		requestAnimationFrame(blockmove)
+	};
+
 	
 }
 
