@@ -2,6 +2,15 @@
 and be easier probably but I kind of want to make one level of a rudementary
 side scroller with obsticals and ai using nothing but vanilla js if I can because
 I think it would be a good learning experience*/
+
+/*I need to make it so you can jump on the ai's head and make him disapear or something
+and then make a couple different types of ai. one that charges you and then maybe one
+that's more stationary but shoots things at you. I'm just trying to build a lot of mario
+type stuff from the ground up without using an engine or anything. I'm going to make
+platforms that move up and down and left and right and maybe try to make a wheel type
+platform with 4 platforms like in mario where if you jump on the top it'll spin down
+etc. I'm also going to try to make a boss at the end you have to jump on the times or
+whatever just so I have all the different standard stuff in one level. */
 const block = document.querySelector('.block');
 const what = document.querySelector('.what');
 const what2 = document.querySelector('.what2');
@@ -78,6 +87,7 @@ flat4Right];
 let platformArrXGrouped = [[flat1Left, flat1Right, flat2Left, flat2Right,
 flat3Left, flat3Right, flat4Left, flat4Right, flat5Left, flat5Right], [hole1Left, hole1Right, hole2Left, hole2Right,
 hole3Left, hole3Right, hole4Left, hole4Right]];
+let platformArrXGroupedO = [[], []];
 let platformArrY = [flat1Top, flat2Top, flat3Top, flat4Top, flat5Top];
 let aiArr = [ai1left];
 
@@ -267,6 +277,7 @@ const closestPlatformLeft = () => {
 
 }
 
+
 const closestPlatformRight = () => {
 		for (let j = 0; j < platformArrXGrouped[1].length; j+=2) {
 		if (hole && blockX >= Math.floor(platformArrXGrouped[1][j]) && blockX <= 
@@ -299,17 +310,23 @@ const closestPlatformRight = () => {
 	}
 }
 
+	/*if (blockX >= Math.floor(hole1Left)  && blockX <= hole1Right -50 
+		|| blockX >= Math.floor(hole2Left) && blockX <= hole2Right - 50
+		|| blockX >= Math.floor(hole3Left) && blockX <= hole3Right - 50
+		|| blockX >= Math.floor(hole4Left) && blockX <= hole4Right - 50)*/
+
 const holeCheck = () => {
 	/*I should make a loop that just loops through the hole array to find these
 	so I don't have to add a new one here every time. */
-	if (blockX >= Math.floor(hole1Left)  && blockX <= hole1Right -50 
-		|| blockX >= Math.floor(hole2Left) && blockX <= hole2Right - 50
-		|| blockX >= Math.floor(hole3Left) && blockX <= hole3Right - 50
-		|| blockX >= Math.floor(hole4Left) && blockX <= hole4Right - 50) {
+	for (let l = 0; l < platformArrXGrouped[1].length; l+=2) {
+	if (blockX >= Math.floor(platformArrXGrouped[1][l])  && 
+		blockX <= platformArrXGrouped[1][l + 1] -50 ) {
 		hole = true;
+		break;
 	} else {
 		hole = false;
 	};
+}
 /*
 	if (blockX >= hole2Left && blockX <= hole2Right) {
 		hole = true;
@@ -329,8 +346,9 @@ const bHCall = () => {
 		baseHeight = currentPlatY;
 	};
 };
-
+let firstShift = true;
 const platformXPostion = (shift) => {
+
 
 	/*it might be harder but I wonder if I could make a loop or something here
 	to that would do all this without having to add them manually. So all I do
@@ -338,12 +356,52 @@ const platformXPostion = (shift) => {
 	just make two loops one for hole and one for grouped and say something like
 	flati+1left = faltileft++1shift and platfromarrXgrouped[0].splice(i, 1, flati+1left)
 	etc and just say toString on the i + 1 in the variable name*/
+	/*I'm having troubles getting the below to work because i can't put the l value
+	inside the variable without it acting like a string and if you say eval() it doesn't
+	work because eval evaluated the string inside a variable and so I'd have to create
+	variables with strings and the variable name and it would kind of defeat the purpose.
+	One idea I have though is to make all the variable for the platform positions 
+	properties inside a map or level object. beings how keys are string i'm thinking I could maybe 
+	do that instead and make this work */
+
+
+/*I could reuse alot of these functions or similar functions in different levels
+or games that are similar which is one reason why I want to make it like this so
+I could import basic funcionality into different types of games and not have to
+set everything up everytime*/
+/*The below seems to make the platform position shift correctly but hole basically
+stays true after the first time you pass a hole. IDK if it's just a timing thing
+because there's so many sub loops dependant on this part of the code and since this
+is also looping and it gets called several times... idk really at the moment I think
+I might come back to it later though.*/
+/*
+	if (firstShift) {
+		for (let m = 0; m < platformArrXGrouped[0].length; m++) {
+			platformArrXGroupedO[0][m] = platformArrXGrouped[0][m];
+		}
+
+		for ( let n = 0; n < platformArrXGrouped[1].length; n++) {
+			platformArrXGroupedO[1][n] = platformArrXGrouped[1][n];
+		}
+		firstShift = false;
+	};
+
+	for (let p = 0; p < platformArrXGrouped[0].length; p++) {
+		platformArrXGrouped[0][p] = platformArrXGroupedO[0][p] + shift;
+		 /*platformArrXGrouped[0].splice(l, 1, eval(`flat${m.toString()}left`));
+	};
+
+	for (let o = 0; o < platformArrXGrouped[1].length; o++) {
+		platformArrXGrouped[1][o] = platformArrXGroupedO[0][o] + shift;
+	};*/
+
 	flat1Left = 0 + shift;
 	platformArrXGrouped[0].splice(0, 1, flat1Left);
 	flat1Right = 600 + shift;
 	platformArrXGrouped[0].splice(1, 1, flat1Right);
 	hole1Left = 600.0000000001 + shift;
 	platformArrXGrouped[1].splice(0, 1, hole1Left);
+	
 	/*I have no idea where this extra 8 or so pixels is coming from in hole1right
 	I was thinking it had something to do with my blockX because it seemed alsmost
 	exactly the 8 that was being incremented in the x direction. I couldn't find anything
@@ -457,12 +515,12 @@ const blockmove = () => {
 		blockX = x;
 		};
 	} else if (mapXMap < 0) {
-		if (blockX >= 200) {
+		if (blockX >= 400) {
 	mapMoving = false;
 	x -= 10;
 	block.style.left = `${x}px`;
 	blockX = x;			
-		} else if (blockX < 200) {
+		} else if (blockX < 400) {
 		mapMoving = true;
 		xMap += 10;
 		map.style.left = `${xMap}px`;
@@ -914,7 +972,7 @@ when it restarts. I'm assuming because the animation loop can't get called.*/
 	ai1.style.left = `${ai1left}px`;
 /*${baseHeight} ${currentPlatY} ${currentY} ${nextLeft} 
 ${xMaxLeft} ${nextRight} ${xMaxRight} ${baseHeight} ${hole} ${inAir}*/
-	what.innerHTML = ` ${ai1.style.left}
+	what.innerHTML = `${hole} ${platformArrXGrouped[0][2]} ${currentY} ${currentPlatY} ${ai1.style.left}
 ${ai1left} ${blockX} ${loopCount} ${ai1Move} ${currentY}`;
 /*
 console.log(baseHeight);
