@@ -22,14 +22,18 @@
 		<div class="hole4" id="hole"></div>
 		<div class="base5" id="base"></div>
 		<div class="hole5" id="hole"></div>
-		<div class="base6" id="base"></div>
+		
 		<div class="hole6" id="hole"></div>
-		<div class="base7" id="base"></div>
+		
 		<div class="hole7" id="hole"></div>
 		<div class="base8" id="base"></div>
 	</div>
 	<div class="block"></div>
 	<div class="ai1"></div>
+	<!-- I'm wondering if i left base6 inside the con div if I could find a simpler method because it moves left witth the con even with the absolute postioning. What happens is you define base6 left by flat6 and so it shifts in the function like normal but when you go right through the map it like doubles how much it actually moves left because it shifts left along with the map and then also shifts left because flat6 shifts in the shift function and you define the base6.left by flat 6 so I'd have to make a second flat 6 function that is just for base6.left for the left and right movement and then keep that outside of the shift function. It might actually be more complicated then just moving it outside of the con div so I think I'll just leave it for now. I might come back and see but it seems like it would actually end up being more code that way. I may be wrong. -->
+	<div class="base6" id="base"></div>
+	<div class="base7" id="base"></div>
+	
 	<script src="./script.js"></script>
 </body>
 </html>

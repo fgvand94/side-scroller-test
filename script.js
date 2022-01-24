@@ -18,6 +18,8 @@ const allPlatforms = document.querySelector('#block');
 const allHoles = document.querySelector('#hole');
 const map = document.querySelector('.con');
 const ai1 = document.querySelector('.ai1');
+const base6 = document.querySelector('.base6');
+const base7 = document.querySelector('.base7');
 /*const allPlatformWidth = allPlatforms.style.width;*/
 /*There might be a built in way to find the x cordinat of a div at any given point
 and if so i might use it but I think I might be able to create one. I mean I could
@@ -38,7 +40,7 @@ let down = false;
 let up3 = true;
 let mapMoving = false;
 let hitAnimation = false;
-  		let iteration = 0;
+let iteration = 0;
 /*For some reason having current height[0] defined off the bat, which I was going
 to do to try to get ride of the chCheck, makes the first !up function trigger and
 drops the block down 8 pixels. I'm not 100% sure why but I'm going to do other things
@@ -80,15 +82,32 @@ let hole4Right = 2330;
 let flat5Left = 2330.0000000001;
 let flat5Right = 2830;
 let flat5Top = 220; 
+let hole5Left = 2830.0000000001;
+let hole5Right = 3030;
+let flat6Left = 3030.0000000001;
+let flat6Right = 3130;
+let flat6Top = 200;
+let hole6Left = 3130.0000000001;
+let hole6Right = 3590;
+let flat7Left = 3590.0000000001;
+let flat7Right = 3690;
+let flat7Top = 200;
+/*Since 6 is absolutly positioned and it when you move it into position with bottom
+it's the bottom of it that is at that poistion you basically have to add the height
+on top of the flat6top so that the currentplatY says that the top is where the block
+should stop and not the bottom of the platform. */
+
 let ai1left = 2465;
 let platformArrX = [flat1Left, flat1Right, hole1Left, hole1Right, flat2Left, flat2Right
 , hole2Left, hole2Right, flat3Left, flat3Right, hole3Left, hole3Right, flat4Left,
 flat4Right];
 let platformArrXGrouped = [[flat1Left, flat1Right, flat2Left, flat2Right,
-flat3Left, flat3Right, flat4Left, flat4Right, flat5Left, flat5Right], [hole1Left, hole1Right, hole2Left, hole2Right,
-hole3Left, hole3Right, hole4Left, hole4Right]];
+flat3Left, flat3Right, flat4Left, flat4Right, flat5Left, flat5Right, flat6Left, flat6Right,
+flat7Left, flat7Right],
+[hole1Left, hole1Right, hole2Left, hole2Right,
+hole3Left, hole3Right, hole4Left, hole4Right, hole5Left, hole5Right, hole6Left, hole6Right]];
 let platformArrXGroupedO = [[], []];
-let platformArrY = [flat1Top, flat2Top, flat3Top, flat4Top, flat5Top];
+let platformArrY = [flat1Top, flat2Top, flat3Top, flat4Top, flat5Top, flat6Top, flat7Top];
 let aiArr = [ai1left];
 
 let maxJump = 140;/*I'll probably put some kind of option menu at the top that
@@ -172,6 +191,11 @@ let currentPlatY = 200;
 
 let ai1BaseHeight = 220;
 let ai1Move = 0;
+let flat6Move = 0;
+let hole5Move = 0;
+let hole6MoveL = 0;
+let hole6MoveR = 0;
+let flat7Move = 0;
 
 
 /*This method is going to get insane when I start doing more complicated things
@@ -445,6 +469,22 @@ I might come back to it later though.*/
 	platformArrXGrouped[0].splice(8, 1, flat5Left);
 	flat5Right = 2830 + shift;
 	platformArrXGrouped[0].splice(9, 1, flat5Right);
+	hole5Left = 2830.0000000001 + shift;
+	platformArrXGrouped[1].splice(8, 1, hole5Left);
+    hole5Right = 3030 + shift + hole5Move;
+    platformArrXGrouped[1].splice(9, 1, hole5Right);
+    flat6Left = 3030.0000000001 + shift + flat6Move;
+    platformArrXGrouped[0].splice(10, 1, flat6Left);
+	flat6Right = 3130.0000000001 + shift + flat6Move;
+	platformArrXGrouped[0].splice(11, 1, flat6Right);
+	hole6Left = 3130.0000000001 + shift + hole6MoveL;
+	platformArrXGrouped[1].splice(10, 1, hole6Left);
+	hole6Right = 3590 + shift + hole6MoveR;
+	platformArrXGrouped[1].splice(11, 1, hole6Right);
+	flat7Left = 3590.0000000001 + shift + flat7Move;
+	platformArrXGrouped[0].splice(12, 1, flat7Left);
+	flat7Right = 3690 + shift + flat7Move;
+	platformArrXGrouped[0].splice(13, 1, flat7Right);
 
 	ai1left = 2465 + shift + ai1Move;
 	
@@ -535,24 +575,72 @@ const blockmove = () => {
 		blockX = x;*/		
 	};
 
+	/*I wasn't thinking but the platforms are going to have to be in increments
+	that are divisible by ten to work... actually they would have to be exactly 
+	ten to always work now that i'm thinking about it and the ai would to to work
+	exactly while it was moving. I was thinking it would be okay but to be %100
+	accurate they need to be. What I need to do is find a way to maintain the speed
+	I have here but get around that limitation*/
+
 				if (mapMoving) {
 
 					if (loopCount < 60) {
+			flat6Move += 3;
 			ai1Move += 3;
+			hole5Move += 3;
+			hole6MoveL +=3;
+			hole6MoveR -= 3;
+			flat7Move -= 3;
 			loopCount ++;
 		} else if (loopCount >= 60 && loopCount <= 100) {
 			loopCount++;
 			ai1Move = ai1Move;
+			flat6Move = flat6Move;
+			hole5Move = hole5Move;
+			hole6MoveL = hole6MoveL;
+			hole6MoveR = hole6MoveR;
+			flat7Move = flat7Move;
 		} else if (loopCount > 100 && loopCount <= 160) {
 			ai1Move -= 3;
+			flat6Move -= 3;
+			hole5Move -= 3;
+			hole6MoveL -=3;
+			hole6MoveR += 3;
+			flat7Move += 3;
 			loopCount++;
 		}  else if (loopCount > 160 && loopCount <= 200) {
 			loopCount ++;
 			ai1Move = ai1Move;
+			flat6Move = flat6Move;
+			hole5Move = hole5Move;
+			hole6MoveL = hole6MoveL;
+			hole6MoveR = hole6MoveR;
+			flat7Move = flat7Move;
 		} else if (loopCount > 200) {
 			loopCount = 0;
 		}
 	};
+
+
+		/*if (mapMoving) {
+		
+		if (loopCount < 60) {
+			
+			
+		} else if (loopCount >= 60 && loopCount <= 100) {
+			
+			
+		} else if (loopCount > 100 && loopCount <= 160) {
+			
+			
+		}  else if (loopCount > 160 && loopCount <= 200) {
+			
+			
+		} else if (loopCount > 200) {
+			loopCount = 0;
+		};
+
+	}*/
 
 	holeCheck();
 	getCurrentY();
@@ -938,22 +1026,95 @@ when it restarts. I'm assuming because the animation loop can't get called.*/
 		if (loopCount < 60) {
 			ai1Move += 3;
 			ai1left += 3;
+			flat6Move += 3;
+			flat6Left += 3;
+			flat6Right += 3;
+			flat7Move -= 3;
+			flat7Left -= 3;
+			flat7Right -= 3;
+			hole5Move += 3;
+			hole5Right += 3;
+			hole6MoveL += 3;
+			hole6Left += 3;
+			hole6MoveR -= 3;
+			hole6Right -= 3;
+			/*platformArrXGrouped[1].splice(8, 1, hole5Left);*/
+			platformArrXGrouped[1].splice(9, 1, hole5Right);
+			platformArrXGrouped[0].splice(10, 1, flat6Left);
+			platformArrXGrouped[0].splice(11, 1, flat6Right);
+			platformArrXGrouped[0].splice(12, 1, flat7Left);
+			platformArrXGrouped[0].splice(13, 1, flat7Right);
+			platformArrXGrouped[1].splice(10, 1, hole6Left);
+			platformArrXGrouped[1].splice(11, 1, hole6Right);
 			loopCount ++;
 		} else if (loopCount >= 60 && loopCount <= 100) {
 			ai1Move = ai1Move;
+			flat6Move = flat6Move;
+			hole5Move = hole5Move;
+			flat7Move = flat7Move;
+			hole6MoveL = hole6MoveL;
+			hole6MoveR = hole6MoveR;
 			loopCount++;
 		} else if (loopCount > 100 && loopCount <= 160) {
 			ai1Move -= 3;
 			ai1left -= 3;
+			flat6Move -= 3;
+			flat6Left -= 3;
+			flat6Right -= 3;
+			flat7Move += 3;
+			flat7Left += 3;
+			flat7Right += 3;
+			hole5Move -= 3;
+			//hole5Left -= 3;
+			hole5Right -= 3;
+			hole6MoveL -= 3;
+			hole6Left -= 3;
+			hole6MoveR += 3;
+			hole6Right += 3;
+			//platformArrXGrouped[1].splice(8, 1, hole5Left);
+			platformArrXGrouped[1].splice(9, 1, hole5Right);
+			platformArrXGrouped[0].splice(10, 1, flat6Left);
+			platformArrXGrouped[0].splice(11, 1, flat6Right);			
+			platformArrXGrouped[0].splice(12, 1, flat7Left);
+			platformArrXGrouped[0].splice(13, 1, flat7Right);	
+			platformArrXGrouped[1].splice(10, 1, hole6Left);
+			platformArrXGrouped[1].splice(11, 1, hole6Right);			
 			loopCount++;
 		}  else if (loopCount > 160 && loopCount <= 200) {
 			ai1Move = ai1Move;
+			flat6Move = flat6Move;
+			hole5Move = hole5Move;
+			flat7Move = flat7Move;
+			hole6MoveL = hole6MoveL;
+			hole6MoveR = hole6MoveR;
 			loopCount ++;
 		} else if (loopCount > 200) {
 			loopCount = 0;
 		};
 
-	}/*	else if (!right2) {
+	}
+/*
+		if (!mapMoving) {
+		
+		if (loopCount < 60) {
+
+			loopCount ++;
+		} else if (loopCount >= 60 && loopCount <= 100) {
+			
+			loopCount++;
+		} else if (loopCount > 100 && loopCount <= 160) {
+
+			loopCount++;
+		}  else if (loopCount > 160 && loopCount <= 200) {
+			
+			loopCount ++;
+		} else if (loopCount > 200) {
+			loopCount = 0;
+		};
+
+	}*/
+
+	/*	else if (!right2) {
 				if (loopCount < 60) {
 			ai1left += 3;
 			loopCount ++;
@@ -970,10 +1131,13 @@ when it restarts. I'm assuming because the animation loop can't get called.*/
 	};*/
 
 	ai1.style.left = `${ai1left}px`;
+	base6.style.left = `${flat6Left}px`;
+	base7.style.left = `${flat7Left}px`;
+
 /*${baseHeight} ${currentPlatY} ${currentY} ${nextLeft} 
-${xMaxLeft} ${nextRight} ${xMaxRight} ${baseHeight} ${hole} ${inAir}*/
-	what.innerHTML = `${hole} ${platformArrXGrouped[0][2]} ${currentY} ${currentPlatY} ${ai1.style.left}
-${ai1left} ${blockX} ${loopCount} ${ai1Move} ${currentY}`;
+${xMaxLeft} ${nextRight} ${xMaxRight} ${baseHeight} ${hole} ${inAir}${platformArrXGrouped[0][2]} ${currentY} ${currentPlatY} ${ai1.style.left}
+${ai1left} ${blockX} ${loopCount} ${ai1Move} ${currentY}*/
+	what.innerHTML = `${platformArrXGrouped[1][8]} ${platformArrXGrouped[1][9]} ${flat6Left} ${base6.style.left} ${hole} `;
 /*
 console.log(baseHeight);
 console.log(block.style.bottom);

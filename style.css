@@ -3,11 +3,9 @@ body {
 	
 
 	overflow: hidden;
-	margin: 0;
-	
-	
-	
+	margin: 0;	
 }
+
 .con {
 	position: absolute;
 	width: 5000px;
@@ -74,6 +72,41 @@ body {
 	width: 500px;
 	height: 220px;
 }
+
+ .hole5 {
+ 	width: 200px;
+ }
+/*I might change the width of hole 5 and 6. since the platforms between these
+are positioned absolutly it they don't serve the same purpose of spacing as they
+do with things that are positioned regularly. They could be anything at this point.
+basically when the time comes i'll make them spaced so that they take up the space
+to the next non moving platform. I could really do this with just on hole but beings
+how the hole positions defined in scipt.js are defined the way they are to create
+moving holes between the two moving platform I'll make it with to just for the sake
+of congruency. But the position of the hole divs isn't actually changing at all in
+script.js so it doesn't really matter other than to space the next non moving element;*/
+
+ .hole6 {
+ 	width: 300px;
+ }
+
+ .base6 {
+ 	display: block;
+ 	position: absolute;
+ 	width: 100px;
+ 	height: 10px;
+ 	
+ 	bottom: 190px;
+ }
+
+ .base7 {
+ 	display: block;
+ 	position: absolute;
+ 	width: 100px;
+ 	height: 10px;
+ 	
+ 	bottom: 190px;
+ }
 
 .block {
 	position: absolute;
