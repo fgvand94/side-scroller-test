@@ -51,6 +51,7 @@ let y = 0;
 let xMap = 0;
 block.style.bottom = '200px';
 block.style.left = '0px';
+let falling = false;
 
 
 /*These aren't positioned relatively or absolutely with left or some other
@@ -62,36 +63,43 @@ idk if that's a function that html/css/js has though but i'll look around*/
 let	flat1Left = 0;
 let	flat1Right = 600;
 let flat1Top = 200;
+let flat1Bottom = -100;
 let	hole1Left = 600.0000000001;
 let	hole1Right = 800;
 let	flat2Left = 800.0000000001;
 let	flat2Right = 1000;
 let flat2Top = 240;
+let flat2Bottom = -100;
 let	hole2Left = 1000.0000000001;
 let	hole2Right = 1200;
 let	flat3Left = 1200.0000000001;
 let	flat3Right = 1700;
 let flat3Top = 200;
+let flat3Bottom = -100;
 let hole3Left = 1700.0000000001;
 let hole3Right = 1980;
 let flat4Left = 1980.0000000001;
 let flat4Right = 2080;
 let flat4Top = 200;
+let flat4Bottom = -100;
 let hole4Left = 2080.0000000001;
 let hole4Right = 2330;
 let flat5Left = 2330.0000000001;
 let flat5Right = 2830;
 let flat5Top = 220; 
+let flat5Bottom = -100;
 let hole5Left = 2830.0000000001;
 let hole5Right = 3030;
 let flat6Left = 3030.0000000001;
 let flat6Right = 3130;
 let flat6Top = 200;
+let flat6Bottom = 190;
 let hole6Left = 3130.0000000001;
 let hole6Right = 3590;
 let flat7Left = 3590.0000000001;
 let flat7Right = 3690;
 let flat7Top = 200;
+let flat7Bottom = 190;
 /*Since 6 is absolutly positioned and it when you move it into position with bottom
 it's the bottom of it that is at that poistion you basically have to add the height
 on top of the flat6top so that the currentplatY says that the top is where the block
@@ -108,6 +116,7 @@ flat7Left, flat7Right],
 hole3Left, hole3Right, hole4Left, hole4Right, hole5Left, hole5Right, hole6Left, hole6Right]];
 let platformArrXGroupedO = [[], []];
 let platformArrY = [flat1Top, flat2Top, flat3Top, flat4Top, flat5Top, flat6Top, flat7Top];
+let platformArrB = [flat1Bottom, flat2Bottom, flat3Bottom, flat4Bottom, flat5Bottom, flat6Bottom, flat7Bottom];
 let aiArr = [ai1left];
 
 let maxJump = 140;/*I'll probably put some kind of option menu at the top that
@@ -196,6 +205,7 @@ let hole5Move = 0;
 let hole6MoveL = 0;
 let hole6MoveR = 0;
 let flat7Move = 0;
+let belowPlatform = false;
 
 
 /*This method is going to get insane when I start doing more complicated things
@@ -218,6 +228,11 @@ const onPlatformHeight = () => {
 			what2.innerHTML = `${platformArrXGrouped[0][k]} 
 								${platformArrXGrouped[0][k + 1]}`;
 			currentPlatY = platformArrY[k/2];
+				if (currentY < platformArrB[k/2]) {
+					belowPlatform = true;
+				} else {
+					belowPlatform = false;
+				}
 			/*The below fixed most of the problems with the block slipping in below
 			the top of the platform because the maxx is based on if current Y is less
 			than plat Y and it wasn't working in cases where you got right at the boundary
@@ -230,6 +245,11 @@ const onPlatformHeight = () => {
 				platformArrXGrouped[0][k + 1]) {
 				console.log('platY hole true');
 				currentPlatY = platformArrY[k/2];
+				if (currentY < platformArrB[k/2]) {
+					belowPlatform = true;
+				} else {
+					belowPlatform = false;
+				}
 			} else {
 				continue;
 			};
@@ -342,6 +362,7 @@ const closestPlatformRight = () => {
 const holeCheck = () => {
 	/*I should make a loop that just loops through the hole array to find these
 	so I don't have to add a new one here every time. */
+
 	for (let l = 0; l < platformArrXGrouped[1].length; l+=2) {
 	if (blockX >= Math.floor(platformArrXGrouped[1][l])  && 
 		blockX <= platformArrXGrouped[1][l + 1] -50 ) {
@@ -502,6 +523,10 @@ I might come back to it later though.*/
 	let loopCount = 0;
 const blockmove = () => {
 
+
+
+
+
 				onPlatformHeight();
 				getCurrentY();
 				closestPlatformLeft();
@@ -520,12 +545,30 @@ const blockmove = () => {
 	of all the moves. I forgot about my shifts though so I probably just need to implement
 	that but*/
 	if (right && right2) {
+		console.log(ai1left);
 	
 		if (blockX <= 750) {
-	mapMoving = false;
-	x += 10;
-	block.style.left = `${x}px`;
-	blockX = x;
+			/*if (blockX + 10 >= ai1left &&  blockX + 10 <= ai1left + 50) {
+				if (currentY <= ai1BaseHeight + 50) {
+					for (i = 1; i < 10; i++) {
+							if (ai1left - blockX === i) {
+								console.log('opuioeqwjflkdsa;lkaj');
+						x += i;
+						block.style.left = `${x}px`;
+						blockX = x;
+						break;
+					} else {
+						continue;
+					}
+					} 
+				}	
+			} else {*/
+			console.log(ai1left);
+		mapMoving = false;
+		x += 10;
+		block.style.left = `${x}px`;
+		blockX = x;
+		
 	} else {
 	mapMoving = true;
 	xMap -= 10;
@@ -574,6 +617,65 @@ const blockmove = () => {
 		block.style.left = `${x}px`;
 		blockX = x;*/		
 	};
+
+
+	 	const hitAIAnimation = () => {
+  		hitAnimation = true;
+
+  		console.log(iteration);
+  		const invisible = () => {
+  			console.log('invisible');
+  			block.style.visibility = 'hidden';
+  			setTimeout(visible, 50);
+  		}
+
+  		const visible = () => {
+  			console.log('visible1');
+  			
+  			iteration ++
+  			block.style.visibility = 'initial';
+  			if (iteration < 5) {
+  				console.log('visible2');
+  				setTimeout(invisible, 50);
+  			} else {
+  				console.log('visible3');
+  				iteration = 0;
+  				restart();
+  			};
+  		};
+
+  		setTimeout(invisible, 50);
+  	}
+
+
+				/*if (currentY <= ai1BaseHeight + 50) {
+
+		if (blockX >= ai1left - 50 && blockX <= ai1left + 50) {
+			/*I guess if you fall and touch the side and not the top this wouldn't
+			apply so I'll have to work all those more edge cases out.
+			if (up && !up2) {
+			up3 = false;
+			left2 = false;
+			right2 = false;	
+			hitAIAnimation();			
+			} else {
+
+
+			up3 = false;
+			left2 = false;
+			right2 = false;
+
+			if (ai1left - blockX > 0) {
+				ai1left = blockX + 50;
+			} else if (ai1left - blockX < 0) {
+				ai1left = blockX - 50;
+			}
+
+			hitAIAnimation();
+		};
+
+		}
+	};*/
 
 	/*I wasn't thinking but the platforms are going to have to be in increments
 	that are divisible by ten to work... actually they would have to be exactly 
@@ -699,11 +801,13 @@ and didn't think about it enough. I'll worry about that later. */
 			down = false;
 		y += 10;
 		block.style.bottom = `${baseHeight + y}px`;
+		falling = false;
 	} else if (currentY < baseHeight + maxJump && chCheck === true) {
 		console.log('1.2');						
 		down = false;
 		y += 10;
 		block.style.bottom = `${heightCheck[0] + y}px`;
+		falling = false;
 	}  else if (currentY >= baseHeight + maxJump) {
 		console.log('1.3');
 		down = false;
@@ -725,6 +829,7 @@ and didn't think about it enough. I'll worry about that later. */
 				closestPlatformLeft();
 				closestPlatformRight();
 				bHCall();
+				falling = true;
 
 		} else if (currentY <= baseHeight) {
 			console.log('2.2');
@@ -752,6 +857,7 @@ and didn't think about it enough. I'll worry about that later. */
 				closestPlatformRight();
 				
 				bHCall();
+				falling = true;
 					if (currentY < currentPlatY) {
 						inAir = true;
 						console.log('2.2.1.1.1');
@@ -775,6 +881,7 @@ and didn't think about it enough. I'll worry about that later. */
 				down = false;
 				y -= 10;
 				block.style.bottom = `${baseHeight + y}px`;
+				falling = true;
 					if (currentY < currentPlatY) {
 						inAir = true;
 						if (xMaxLeft > 0) {
@@ -792,7 +899,18 @@ and didn't think about it enough. I'll worry about that later. */
 						};
 					};
 				};	 	
-			 };
+			 } else if (!hole && belowPlatform) {
+				down = false;
+				y -= 10;
+				block.style.bottom = `${heightCheck[0] + y}px`;
+				onPlatformHeight();
+				getCurrentY();
+				closestPlatformLeft();
+				closestPlatformRight();
+				
+				bHCall();
+				falling = true;			 	
+			 }
 
 			 /* else if (currentY > currentPlatY && blockX < hole1Left || blockX > hole1Right) {
 			 	console.log('no');
@@ -840,6 +958,7 @@ and didn't think about it enough. I'll worry about that later. */
 				closestPlatformRight();
 				
 				bHCall();
+				falling = true;
 			/*hole should still be true until 760. which it is. at 750 your right
 			touching the edge border of platform two. The second you hit this border
 			currentplatY should change. and that should happen before these below functions
@@ -854,6 +973,7 @@ and didn't think about it enough. I'll worry about that later. */
 				closestPlatformRight();
 				
 				bHCall();
+				falling = true;
 			/*For some reason I was thinking that the if hole ===true in the below
 			was to make it so you didn't flot on top of the hole so i wasn't putting
 			this below. I forgot though it was actually just so you'd fall below 0 and
@@ -893,6 +1013,7 @@ and didn't think about it enough. I'll worry about that later. */
 					closestPlatformLeft();
 					closestPlatformRight();
 					bHCall();
+					falling = true;
 					if (currentY < currentPlatY) {
 						inAir = true;
 						if (xMaxLeft > 0) {
@@ -909,6 +1030,15 @@ and didn't think about it enough. I'll worry about that later. */
 							};
 						};
 					};
+			} else if (!hole && belowPlatform) {
+				y -= 10;
+				block.style.bottom = `${heightCheck[0] + y}px`;
+					onPlatformHeight();
+					getCurrentY();
+					closestPlatformLeft();
+					closestPlatformRight();
+					bHCall();
+					falling = true;
 			} else {
 			console.log('3.4');
 			up2 = true;
@@ -919,6 +1049,7 @@ and didn't think about it enough. I'll worry about that later. */
 			inAir = false;
 			left2 = true;
 			right2 = true;
+			falling = false;
 			};
 		};
 	};
@@ -934,7 +1065,7 @@ where it needs to you don't really need it to reset. If you do it causes problem
   		if (hitAnimation) {
   			requestAnimationFrame(blockmove);
   		};
-
+  	falling = false;
   	hitAnimation = false;
  	y = 0;
 	left2 = true;
@@ -970,7 +1101,7 @@ just not executing any of the other functions. saying if hit animation = false t
 do the loop works other than that when you restart for some reason the ai block is
 way back at the start of the map and isn't moving. also you can't move the block
 when it restarts. I'm assuming because the animation loop can't get called.*/
-  	const hitAIAnimation = () => {
+ /* 	const hitAIAnimation = () => {
   		hitAnimation = true;
 
   		console.log(iteration);
@@ -996,23 +1127,17 @@ when it restarts. I'm assuming because the animation loop can't get called.*/
   		};
 
   		setTimeout(invisible, 50);
-  	}
+  	}*/
 	if (currentY < -100) {
 		console.log('1');
 		restart();
 	};
 	/*Instead of instantly returning to the beggining here I should play
 	some kind of animation where the block falls off the map or does something*/
-	if (currentY <= ai1BaseHeight + 50) {
+	/*I might have to position this more strategically in relation to the other two
+	ai move functions to make my x over work corectly all the time if it'll even work
+	the way I want */
 
-		if (blockX >= ai1left - 50 && blockX <= ai1left + 50) {
-			up3 = false;
-			left2 = false;
-			right2 = false;
-
-			hitAIAnimation();
-		};
-	};
 
 				onPlatformHeight();
 				getCurrentY();
@@ -1093,6 +1218,40 @@ when it restarts. I'm assuming because the animation loop can't get called.*/
 		};
 
 	}
+	/*There's more scenarios where the block could fall on the ai's head but in this
+	scenario not really so i'm going to try it like this first*/
+
+				if (currentY <= ai1BaseHeight + 50) {
+
+		if (blockX >= ai1left - 50 && blockX <= ai1left + 50) {
+			/*I guess if you fall and touch the side and not the top this wouldn't
+			apply so I'll have to work all those more edge cases out.*/
+			if (falling) {
+			up3 = false;
+			left2 = false;
+			right2 = false;
+			hitAIAnimation();				
+			} else {
+
+
+			up3 = false;
+			left2 = false;
+			right2 = false;
+
+			if (ai1left - blockX > 0) {
+				ai1left = blockX + 50;
+			} else if (ai1left - blockX < 0) {
+				ai1left = blockX - 50;
+			}
+
+			hitAIAnimation();
+		};
+
+		}
+	};
+
+
+
 /*
 		if (!mapMoving) {
 		

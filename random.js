@@ -2543,6 +2543,7 @@ where it needs to you don't really need it to reset. If you do it causes problem
 	platformXPostion(mapXMap);
   	};
 
+  	
   	const hitAIAnimation = () => {
   		let iteration = 0;
   		const invisible = () => {
