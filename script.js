@@ -983,11 +983,11 @@ and didn't think about it enough. I'll worry about that later. */
 					if (xMaxLeft > 0) {
 						left2 = true;
 						right2 = true;
-						if (blockX <= xMaxLeft) {
+						if (blockX <= xMaxLeft && !belowPlatform) {
 							console.log('3.3.1');
 							left2 = false;
 							
-						} else if (blockX >= xMaxRight) {
+						} else if (blockX >= xMaxRight && !belowPlatform) {
 							console.log('3.3.2');
 							right2 = false;
 							
@@ -1019,11 +1019,11 @@ and didn't think about it enough. I'll worry about that later. */
 						if (xMaxLeft > 0) {
 						left2 = true;
 						right2 = true;
-							if (blockX <= xMaxLeft) {
+							if (blockX <= xMaxLeft && !belowPlatform) {
 								console.log('3.3.1');
 								left2 = false;
 								
-							} else if (blockX >= xMaxRight) {
+							} else if (blockX >= xMaxRight && !belowPlatform) {
 								console.log('3.3.2');
 								right2 = false;
 								
@@ -1296,7 +1296,7 @@ when it restarts. I'm assuming because the animation loop can't get called.*/
 /*${baseHeight} ${currentPlatY} ${currentY} ${nextLeft} 
 ${xMaxLeft} ${nextRight} ${xMaxRight} ${baseHeight} ${hole} ${inAir}${platformArrXGrouped[0][2]} ${currentY} ${currentPlatY} ${ai1.style.left}
 ${ai1left} ${blockX} ${loopCount} ${ai1Move} ${currentY}*/
-	what.innerHTML = `${platformArrXGrouped[1][8]} ${platformArrXGrouped[1][9]} ${flat6Left} ${base6.style.left} ${hole} `;
+	what.innerHTML = `${belowPlatform} ${platformArrXGrouped[1][8]} ${platformArrXGrouped[1][9]} ${flat6Left} ${base6.style.left} ${hole} `;
 /*
 console.log(baseHeight);
 console.log(block.style.bottom);
