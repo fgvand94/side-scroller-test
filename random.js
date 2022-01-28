@@ -2667,3 +2667,157 @@ case though cause I understande WHY it was doing that now. He added a bunch of o
 fancy things that I don't compleatly understand but I didn't read over it to thourughly
 I need to look up all the methods and things he put in there. */
 
+
+/*below is a version of the platform adjust function that has a loop to find the moving
+platform it's not working i'm thinking it may just be because the loop takes to
+long to execute and I could maybe re read on async functions which I forgot and have
+the rest of it wait until the loop is finished. IDK if that's why it's not working
+though*/
+
+const movingPlatAdj = (var1, var2) => {
+	/*I was going to pass in platformarrX[0][k] and [k + 1] from the on platform
+	height fnction. It didn't quite work although I think with some tweaking I could
+	maybe get it to work or at least something similar to work so I don't have to 
+	add every moving platform in here but I'll worry about that in a minute*/
+	for (let i = 0; i < platformArrXGrouped[0]; i+=2) {
+		if (platformArrXGrouped[0][i] -.0000000001 - blockX + 50 < 0 || blockX 
+			- platformArrXGrouped[0][i + 1] < 0 ) {
+			adjIOut = i;
+		};
+	};
+
+	if (currentY < platformArrY[adjIOut/2] && currentY + 100 > platformArrB[adjIOut/2]) {
+
+		if (platformArrXGrouped[0][adjIOut] -.0000000001 - blockX < 50 && platformArrXGrouped[0][adjIOut] - .0000000001 
+			-blockX > 40 && flat6Direction === 0) {
+	what2.innerHTML = 'what';		
+			blockX = platformArrXGrouped[0][adjIOut] - 50;
+			block.style.left = `${blockX}px`
+			platformArrXGrouped[0].splice(10, 1, platformArrXGrouped[0][adjIOut]);
+			right3 = false;
+			xChange = true;
+
+			/*belowPlatform = true;*/
+		} else if (platformArrXGrouped[0][adjIOut] -.0000000001 - blockX < 50 && platformArrXGrouped[0][adjIOut] - .0000000001 
+			-blockX > 40 && flat6Direction === 2) {
+			what2.innerHTML = 'what';
+			blockX = platformArrXGrouped[0][adjIOut] - 50;
+			block.style.left = `${blockX}px`
+			platformArrXGrouped[0].splice(10, 1, platformArrXGrouped[0][adjIOut]);
+			right3 = false;
+			xChange = true;
+/*This jumps after I fall below the line of the moving platform. It seems like
+nothing actually moves while i'm hitting the side of the platform. at least when
+I hit it after jumping off the previous platform. This I believe has something
+to do with the map shift cause it's about the only scenario where the map shift
+applies while any of these are excecuting.*/
+		} else if (platformArrXGrouped[0][adjIOut] -.0000000001 - blockX < 53 && platformArrXGrouped[0][adjIOut] - .0000000001 
+			-blockX > 40 && flat6Direction === 1 && right) {
+			/*Turning map moving map it so that the platforms move but when you
+			fall the map still jerks. since your only moving three along with the
+			platform I'll need to adjust the map move so that it only moves three
+			as well while this is happening and then smooth it back out to factors
+			of ten like I did with the blockx and x. I'll probably need to keep
+			map moving true because it is and then I may also have to adjust something
+			in the (mapmoving) platform move function possibly. IDK we'll see. I'm not
+			exactly sure how to implement it. In any case it took a team of over
+			a dozen on average of 2 or 3 years working full time to make the origional 
+			mario games
+			and i'm sure they all had computer science degrees so I'd say i'm pretty
+			fucking decent. */
+			mapMoving = false;
+			what2.innerHTML = 'what';
+			blockX = platformArrXGrouped[0][adjIOut] - 50;
+			block.style.left = `${blockX}px`
+			platformArrXGrouped[0].splice(10, 1, platformArrXGrouped[0][adjIOut]);
+			right3 = false;
+			xChange = true;
+
+		} else {
+
+			right3 = true;
+		};
+
+		if (blockX - platformArrXGrouped[0][adjIOut + 1] < 0  && blockX - platformArrXGrouped[0][adjIOut + 1] > - 20 && flat6Direction
+			=== 1) {
+
+ 			blockX = platformArrXGrouped[0][adjIOut + 1];
+			block.style.left = `${blockX}px`;
+			what2.innerHTML = `${blockX} ${platformArrXGrouped[0][adjIOut + 1]}`;
+			platformArrXGrouped[0].splice(11, 1, platformArrXGrouped[0][adjIOut + 1]);
+			left3 = false;
+			/*I put three in the below because when left3 = false the platform
+			will always move before you do putting it three away at everyframe
+			but since your holding left you have the intention of moving in that
+			direction so you need to say < 3 and not < 0 because it actually will
+			be between 0 and 3 at every next frame while this is happening. It definitly
+			seem to help some of the jerkiness here but it's still not perfect*/
+		} else if (blockX - platformArrXGrouped[0][adjIOut + 1] <= 3 && blockX - platformArrXGrouped[0][adjIOut + 1] > - 20 && flat6Direction
+			=== 2 && left) {
+			
+			console.log('this');
+			blockX = platformArrXGrouped[0][adjIOut + 1];
+			block.style.left = `${blockX}px`;
+			platformArrXGrouped[0].splice(11, 1, platformArrXGrouped[0][adjIOut + 1]);
+			left3 = false;	
+
+		 } else if (blockX - platformArrXGrouped[0][adjIOut + 1] < 0 && blockX - platformArrXGrouped[0][adjIOut + 1] > -20 && flat6Direction
+			=== 0) {
+		 	what2.innerHTML = 'what';
+			blockX = platformArrXGrouped[0][adjIOut + 1];
+			block.style.left = `${blockX}px`;
+			platformArrXGrouped[0].splice(11, 1, platformArrXGrouped[0][adjIOut + 1]);
+			left3 = false;				
+
+		} else {
+			left3 = true;
+		}
+	} else {
+		console.log('this2');
+		blockXAdj = blockX - x;
+		for (let i = 0; i < 10; i ++ ) {
+			if (blockX % 10 === i) {
+				/*I guess I could maybe do += i when it's on one side of five
+				and -= 10-i when it's on the other just to get it to the closest
+				ten. although if it goes in the opposite direction from the movement
+				of the platform that could cause problems... nevermind this only happens
+				if below the platform so it shouldn't cause problems. and if i really
+					wanted to I could keep the left3/right 3 disabled for an extra turn
+				after this with a counter and smooth it over two or maybe three frames*/
+				if (right) {
+				blockXAdj += i;
+				} else if (left) {
+					/*adding the distinction for left and right and then remove
+					the first call to this function before the left and right
+					arrow functions trigger seems to have fixed the problems I was
+					having with you coming in on the left side of the platform. now
+					the only issue seems to be when you hit the platform as the map
+					itself is moving. It causes sort of a jerk in the map when you
+					hit and then drop below. IDK if I'm going to worry about it now.
+					I might fix it later as it's not effecting the rest of my program
+					in any way and it 'almost' looks intentional lol. I'll definitly
+					come back to it later as well as making this more dynamic like I did
+					with some of the other functions so I don't have to add each new
+					moving platform here. Everythings set up in a way though that I'll be able
+					to finish the rest of the map and then implement the refactored code and these
+					minor fixes later without causing any issues. */
+					blockXAdj -= i;
+				};
+			};
+		};
+		console.log(blockXAdj);
+
+		x = x + blockXAdj;
+		blockX = x;
+		block.style.left = `${x}px`;
+		console.log(x);
+		/*xMap = xMap + blockXAdj;*/
+		right3 = true;
+		left3 = true;
+	};
+
+
+
+
+
+};

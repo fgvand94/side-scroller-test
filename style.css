@@ -10,7 +10,6 @@ body {
 	position: absolute;
 	width: 5000px;
 	height: 240px;
-	
 	bottom: 0px;
 	font-size: 0px;
 	left: 0px;
@@ -87,7 +86,11 @@ of congruency. But the position of the hole divs isn't actually changing at all 
 script.js so it doesn't really matter other than to space the next non moving element;*/
 
  .hole6 {
- 	width: 300px;
+ 	width: 460px;
+ }
+
+ .hole7 {
+ 	width: 400px;
  }
 
  .base6 {
@@ -106,6 +109,11 @@ script.js so it doesn't really matter other than to space the next non moving el
  	height: 10px;
  	
  	bottom: 190px;
+ }
+
+ .base8 {
+ 	width: 600px;
+ 	height: 220px;
  }
 
 .block {

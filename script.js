@@ -32,8 +32,10 @@ I could use those variables to dynamically define my buttom point for jumps and
 things instead of just having everything set to 200px*/
 let right = false;
 let right2 = true;
+let right3 = true;
 let left = false;
 let left2 = true;
+let left3 = true;
 let up = false;
 let up2 = true;
 let down = false;
@@ -100,6 +102,12 @@ let flat7Left = 3590.0000000001;
 let flat7Right = 3690;
 let flat7Top = 200;
 let flat7Bottom = 190;
+let hole7Left = 3690.0000000001;
+let hole7Right = 3890;
+let flat8Left = 3890.0000000001;
+let flat8Right = 4490;
+let flat8Top = 220;
+let flat8Bottom = -100;
 /*Since 6 is absolutly positioned and it when you move it into position with bottom
 it's the bottom of it that is at that poistion you basically have to add the height
 on top of the flat6top so that the currentplatY says that the top is where the block
@@ -111,13 +119,18 @@ let platformArrX = [flat1Left, flat1Right, hole1Left, hole1Right, flat2Left, fla
 flat4Right];
 let platformArrXGrouped = [[flat1Left, flat1Right, flat2Left, flat2Right,
 flat3Left, flat3Right, flat4Left, flat4Right, flat5Left, flat5Right, flat6Left, flat6Right,
-flat7Left, flat7Right],
+flat7Left, flat7Right, flat8Left, flat8Right],
 [hole1Left, hole1Right, hole2Left, hole2Right,
-hole3Left, hole3Right, hole4Left, hole4Right, hole5Left, hole5Right, hole6Left, hole6Right]];
+hole3Left, hole3Right, hole4Left, hole4Right, hole5Left, hole5Right, 
+hole6Left, hole6Right, hole7Left, hole7Right]];
 let platformArrXGroupedO = [[], []];
-let platformArrY = [flat1Top, flat2Top, flat3Top, flat4Top, flat5Top, flat6Top, flat7Top];
-let platformArrB = [flat1Bottom, flat2Bottom, flat3Bottom, flat4Bottom, flat5Bottom, flat6Bottom, flat7Bottom];
+let platformArrY = [flat1Top, flat2Top, flat3Top, flat4Top, flat5Top, 
+flat6Top, flat7Top, flat8Top];
+let platformArrB = [flat1Bottom, flat2Bottom, flat3Bottom, flat4Bottom,
+ flat5Bottom, flat6Bottom, flat7Bottom, flat8Bottom];
 let aiArr = [ai1left];
+let flat6Direction = 0;
+let flat7Direction = 0;
 
 let maxJump = 140;/*I'll probably put some kind of option menu at the top that
 allows you to adjust the physics. jump height and speed etc. I'll make it increment
@@ -205,6 +218,7 @@ let hole5Move = 0;
 let hole6MoveL = 0;
 let hole6MoveR = 0;
 let flat7Move = 0;
+let hole7Move = 0;
 let belowPlatform = false;
 
 
@@ -221,18 +235,29 @@ other objects in the environment so that it wouldn't be able to move passed them
 		/*I could maybe combine this and the closest platfrom. also I could maybe
 		combine the right and left closest platform but i'm just going to do it
 		like this for now and decide later if i want to do that*/
+let currentPlatIndex = 0;
+let onPlatform = false;
 const onPlatformHeight = () => {
 	for (let k = 0; k < platformArrXGrouped[0].length; k+=2) {
 		if (hole === false && blockX >= platformArrXGrouped[0][k] -50.0000000001 
 			&& blockX <= platformArrXGrouped[0][k + 1]) {
-			what2.innerHTML = `${platformArrXGrouped[0][k]} 
-								${platformArrXGrouped[0][k + 1]}`;
+			/*what2.innerHTML = `${platformArrXGrouped[0][k]} 
+								${platformArrXGrouped[0][k + 1]}`;*/
 			currentPlatY = platformArrY[k/2];
-				if (currentY < platformArrB[k/2]) {
+				if (currentY + 100 <= platformArrB[k/2]) {
 					belowPlatform = true;
 				} else {
 					belowPlatform = false;
-				}
+				};
+				if (currentY === currentPlatY) {
+					onPlatform = true;
+				};
+				currentPlatIndex = k;
+				break;
+			/*if (platformArrXGrouped[0][k] - .0000000001 - blockX < 50) {
+				platformArrXGrouped[0][k] = blockX + 50;
+			}*/
+
 			/*The below fixed most of the problems with the block slipping in below
 			the top of the platform because the maxx is based on if current Y is less
 			than plat Y and it wasn't working in cases where you got right at the boundary
@@ -245,11 +270,19 @@ const onPlatformHeight = () => {
 				platformArrXGrouped[0][k + 1]) {
 				console.log('platY hole true');
 				currentPlatY = platformArrY[k/2];
-				if (currentY < platformArrB[k/2]) {
+				if (currentY + 100 <= platformArrB[k/2]) {
 					belowPlatform = true;
 				} else {
 					belowPlatform = false;
 				}
+				if (currentY === currentPlatY) {
+					onPlatform = true;
+				};
+				currentPlatIndex = k;
+			/*if (platformArrXGrouped[0][k] - .0000000001 - blockX < 50) {
+				platformArrXGrouped[0][k] = blockX + 50;
+			}*/break;
+
 			} else {
 				continue;
 			};
@@ -257,7 +290,12 @@ const onPlatformHeight = () => {
 		} else {
 			continue;
 		};
-	};/*
+	};
+
+
+
+
+	/*
 	if (hole === true) {
 		currentPlatY = 0;
 	}*/
@@ -287,6 +325,7 @@ const closestPlatformLeft = () => {
 		if (hole && blockX >= Math.floor(platformArrXGrouped[1][i]) && blockX <= 
 			platformArrXGrouped[1][i + 1]) {
 			nextLeft = Math.floor(platformArrXGrouped[1][i]);
+
 
 		break;
 		/*} else if (hole && blockX === platformArrXGrouped[i]) {
@@ -327,7 +366,8 @@ const closestPlatformRight = () => {
 		if (hole && blockX >= Math.floor(platformArrXGrouped[1][j]) && blockX <= 
 			platformArrXGrouped[1][j + 1]) {
 			nextRight = platformArrXGrouped[1][j + 1];
-			console.log('nextRight');
+			console.log(j);
+
 		break;
 		/*the below is uneccasary lol. I would trigger true at the same instance above
 		because it's still >= [1][j];*/
@@ -368,8 +408,12 @@ const holeCheck = () => {
 		blockX <= platformArrXGrouped[1][l + 1] -50 ) {
 		hole = true;
 		break;
-	} else {
+	} else	{	
 		hole = false;
+	};
+
+	if (!right3 || !left3) {
+		hole = true;
 	};
 }
 /*
@@ -391,7 +435,261 @@ const bHCall = () => {
 		baseHeight = currentPlatY;
 	};
 };
-let firstShift = true;
+
+
+/*I haven't been able to totally get this to work yet. it kind of works. when
+you touch the side it will move you left. Before I altered the hole === true if
+right 3 === true you'd get stuck in the y axis until it finished. now you continue
+to fall but either you don't turn eight 3 on untill you fall compleatly and it
+sort of has this wierd effect of looking like it bumps you to the left even after
+you fall below the platform. Or you turn right 3 true but when you try to go right
+it shoots right really fast and the top of your block gets stuck to the bottom of
+the moving platform. I thought the jumping right was because x was still defined
+at the point where you fell off so when you pressed right it made you jump.
+the function below that I thought would smooth that out didn't work and the wierd
+thing is that going left doesn't ahve that effect after you've been pushed. I also
+tried implementing something like this more universally in both the x move and
+next right/ current plat but I couldn't get that to work at all. It seems like
+it would be a better alternitive if I could make it work because it's already set
+up and would work for all the platforms but I haven't gotten it to work yet and
+I wasn't as sure as to why. This is basically a copy of the ai function I did
+just slightly more compex and called in differnt spot. There's alot going on
+with those other functions. They get called multiple times and are dependent on
+other functions which also get called multiple times so I figured I'd try to isolate
+it and then if I got it to work then maybe I'd see if I could put it in to one
+of those other functions so it works more globally idk yet though we'll see. */
+let blockXAdj = 0;
+let adjIOut = 0;
+const movingPlatAdj = (var1, var2) => {
+	/*I was going to pass in platformarrX[0][k] and [k + 1] from the on platform
+	height fnction. It didn't quite work although I think with some tweaking I could
+	maybe get it to work or at least something similar to work so I don't have to 
+	add every moving platform in here but I'll worry about that in a minute*/
+	/*The reason for why the second moving platform wouldn't work was actually
+	fairly simple. I just overlooked that since they're both the same height and
+	everything and the 7 was an else if to the 6top and currentY part since they're
+	both true and false at the same times only the first one will ever execute
+	because it doesn't considere any of the other else if's after the first one
+	is true. idk why I overlooked that lol I was thinking it was going to be something
+	crazy cause the rest of this has been fairly involved. I feel like there's probably
+	a way to refactor this now though and I might be able to make some kind of loop
+	work now I'm not sure though. */
+
+	if (currentY < flat6Top && currentY + 100 > flat6Bottom) {
+		console.log(6);
+		if (flat6Left -.0000000001 - blockX < 50 && flat6Left - .0000000001 
+			- blockX > 40 && flat6Direction === 0) {
+			console.log('6.1.1');
+	what2.innerHTML = 'what';		
+			blockX = flat6Left - 50;
+			block.style.left = `${blockX}px`
+			platformArrXGrouped[0].splice(10, 1, flat6Left);
+			right3 = false;
+			
+
+			/*belowPlatform = true;*/
+		} else if (flat6Left -.0000000001 - blockX < 50 && flat6Left - .0000000001 
+			-blockX > 40 && flat6Direction === 2) {
+			what2.innerHTML = 'what';
+			blockX = flat6Left - 50;
+			block.style.left = `${blockX}px`
+			platformArrXGrouped[0].splice(10, 1, flat6Left);
+			right3 = false;
+			xChange = true;
+			console.log('6.1.2');
+/*This jumps after I fall below the line of the moving platform. It seems like
+nothing actually moves while i'm hitting the side of the platform. at least when
+I hit it after jumping off the previous platform. This I believe has something
+to do with the map shift cause it's about the only scenario where the map shift
+applies while any of these are excecuting.*/
+		} else if (flat6Left -.0000000001 - blockX < 53 && flat6Left - .0000000001 
+			-blockX > 40 && flat6Direction === 1 && right) {
+			/*Turning map moving map it so that the platforms move but when you
+			fall the map still jerks. since your only moving three along with the
+			platform I'll need to adjust the map move so that it only moves three
+			as well while this is happening and then smooth it back out to factors
+			of ten like I did with the blockx and x. I'll probably need to keep
+			map moving true because it is and then I may also have to adjust something
+			in the (mapmoving) platform move function possibly. IDK we'll see. I'm not
+			exactly sure how to implement it.*/
+			mapMoving = false;
+			what2.innerHTML = 'what';
+			blockX = flat6Left - 50;
+			block.style.left = `${blockX}px`
+			platformArrXGrouped[0].splice(10, 1, flat6Left);
+			right3 = false;
+			
+			mapMoving = false;
+console.log('6.1.3');
+		} else if (blockX - flat6Right <= 0  && blockX - flat6Right > - 20 && flat6Direction
+			=== 1) {
+			console.log('6.2.1');
+ 			blockX = flat6Right;
+			block.style.left = `${blockX}px`;
+			what2.innerHTML = `${blockX} ${flat6Right}`;
+			platformArrXGrouped[0].splice(11, 1, flat6Right);
+			left3 = false;
+			/*I put three in the below because when left3 = false the platform
+			will always move before you do putting it three away at everyframe
+			but since your holding left you have the intention of moving in that
+			direction so you need to say < 3 and not < 0 because it actually will
+			be between 0 and 3 at every next frame while this is happening. It definitly
+			seem to help some of the jerkiness here but it's still not perfect*/
+		} else if (blockX - flat6Right <= 3 && blockX - flat6Right > - 20 && flat6Direction
+			=== 2 && left) {
+			console.log('6.2.2');
+			
+			blockX = flat6Right;
+			block.style.left = `${blockX}px`;
+			platformArrXGrouped[0].splice(11, 1, flat6Right);
+			left3 = false;
+			mapMoving = false;	
+
+		 } else if (blockX - flat6Right <= 0 && blockX - flat6Right > -20 && flat6Direction
+			=== 0) {
+		 	console.log('6.2.3');
+		 	what2.innerHTML = 'what';
+			blockX = flat6Right;
+			block.style.left = `${blockX}px`;
+			platformArrXGrouped[0].splice(11, 1, flat6Right);
+			left3 = false;				
+
+		} else if (Math.floor(flat7Left) - blockX <= 50 && Math.floor(flat7Left)
+			-blockX > 40 && flat7Direction === 0) {
+			console.log('7.1.1');
+			what2.innerHTML = 'what';		
+			blockX = flat7Left - 50;
+			block.style.left = `${blockX}px`
+			platformArrXGrouped[0].splice(12, 1, flat7Left);
+			right3 = false;
+			
+
+			/*belowPlatform = true;*/
+		} else if (Math.floor(flat7Left) - blockX <= 50 && Math.floor(flat7Left) 
+			-blockX > 40 && flat7Direction === 2) {
+			console.log('7.1.2');
+			what2.innerHTML = 'what';
+			blockX = flat7Left - 50;
+			block.style.left = `${blockX}px`
+			platformArrXGrouped[0].splice(12, 1, flat7Left);
+			right3 = false;
+			
+/*This jumps after I fall below the line of the moving platform. It seems like
+nothing actually moves while i'm hitting the side of the platform. at least when
+I hit it after jumping off the previous platform. This I believe has something
+to do with the map shift cause it's about the only scenario where the map shift
+applies while any of these are excecuting.*/
+		} else if (Math.floor(flat7Left) - blockX <= 53 && Math.floor(flat7Left) 
+			-blockX > 40 && flat7Direction === 1 && right) {
+			console.log('7.1.3');
+			/*Turning map moving map it so that the platforms move but when you
+			fall the map still jerks. since your only moving three along with the
+			platform I'll need to adjust the map move so that it only moves three
+			as well while this is happening and then smooth it back out to factors
+			of ten like I did with the blockx and x. I'll probably need to keep
+			map moving true because it is and then I may also have to adjust something
+			in the (mapmoving) platform move function possibly. IDK we'll see. I'm not
+			exactly sure how to implement it. In any case it took a team of over
+			a dozen on average of 2 or 3 years working full time to make the origional 
+			mario games
+			and i'm sure they all had computer science degrees so I'd say i'm pretty
+			fucking decent. */
+			mapMoving = false;
+			what2.innerHTML = 'what';
+			blockX = flat7Left - 50;
+			block.style.left = `${blockX}px`
+			platformArrXGrouped[0].splice(12, 1, flat7Left);
+			right3 = false;
+			mapMoving = false;
+
+		} else if (blockX - flat7Right <= 0  && blockX - flat7Right > - 20 && flat7Direction
+			=== 1) {
+			console.log('7.2.1');
+ 			blockX = flat7Right;
+			block.style.left = `${blockX}px`;
+			what2.innerHTML = `${blockX} ${flat7Right}`;
+			platformArrXGrouped[0].splice(13, 1, flat7Right);
+			left3 = false;
+			/*I put three in the below because when left3 = false the platform
+			will always move before you do putting it three away at everyframe
+			but since your holding left you have the intention of moving in that
+			direction so you need to say < 3 and not < 0 because it actually will
+			be between 0 and 3 at every next frame while this is happening. It definitly
+			seem to help some of the jerkiness here but it's still not perfect*/
+		} else if (blockX - flat7Right <= 3 && blockX - flat7Right > - 20 && flat7Direction
+			=== 2 && left) {
+			console.log('7.2.2');
+			
+			blockX = flat7Right;
+			block.style.left = `${blockX}px`;
+			platformArrXGrouped[0].splice(13, 1, flat7Right);
+			left3 = false;	
+			mapMoving = false;
+		 } else if (blockX - flat7Right <= 0 && blockX - flat7Right > -20 && flat7Direction
+			=== 0) {
+		 	console.log('7.2.3');
+		 	what2.innerHTML = 'what';
+			blockX = flat7Right;
+			block.style.left = `${blockX}px`;
+			platformArrXGrouped[0].splice(13, 1, flat7Right);
+			left3 = false;				
+
+		} else {
+			console.log('7.2.4');
+			left3 = true;
+			right3 = true;
+		}
+	} else {
+		console.log('8');
+		blockXAdj = blockX - x;
+		for (let i = 0; i < 10; i ++ ) {
+			if (blockX % 10 === i) {
+				/*I guess I could maybe do += i when it's on one side of five
+				and -= 10-i when it's on the other just to get it to the closest
+				ten. although if it goes in the opposite direction from the movement
+				of the platform that could cause problems... nevermind this only happens
+				if below the platform so it shouldn't cause problems. and if i really
+					wanted to I could keep the left3/right 3 disabled for an extra turn
+				after this with a counter and smooth it over two or maybe three frames*/
+				if (right) {
+				blockXAdj += i;
+				} else if (left) {
+					/*adding the distinction for left and right and then remove
+					the first call to this function before the left and right
+					arrow functions trigger seems to have fixed the problems I was
+					having with you coming in on the left side of the platform. now
+					the only issue seems to be when you hit the platform as the map
+					itself is moving. It causes sort of a jerk in the map when you
+					hit and then drop below. IDK if I'm going to worry about it now.
+					I might fix it later as it's not effecting the rest of my program
+					in any way and it 'almost' looks intentional lol. I'll definitly
+					come back to it later as well as making this more dynamic like I did
+					with some of the other functions so I don't have to add each new
+					moving platform here. Everythings set up in a way though that I'll be able
+					to finish the rest of the map and then implement the refactored code and these
+					minor fixes later without causing any issues.*/ 
+					blockXAdj -= i;
+				};
+			};
+		};
+		console.log(blockXAdj);
+
+		x = x + blockXAdj;
+		blockX = x;
+		block.style.left = `${x}px`;
+		console.log(x);
+		/*xMap = xMap + blockXAdj;*/
+		right3 = true;
+		left3 = true;
+		blockXAdj = 0;
+	};
+
+
+
+
+
+};
+
 const platformXPostion = (shift) => {
 
 
@@ -496,7 +794,7 @@ I might come back to it later though.*/
     platformArrXGrouped[1].splice(9, 1, hole5Right);
     flat6Left = 3030.0000000001 + shift + flat6Move;
     platformArrXGrouped[0].splice(10, 1, flat6Left);
-	flat6Right = 3130.0000000001 + shift + flat6Move;
+	flat6Right = 3130 + shift + flat6Move;
 	platformArrXGrouped[0].splice(11, 1, flat6Right);
 	hole6Left = 3130.0000000001 + shift + hole6MoveL;
 	platformArrXGrouped[1].splice(10, 1, hole6Left);
@@ -506,6 +804,14 @@ I might come back to it later though.*/
 	platformArrXGrouped[0].splice(12, 1, flat7Left);
 	flat7Right = 3690 + shift + flat7Move;
 	platformArrXGrouped[0].splice(13, 1, flat7Right);
+	hole7Left = 3690.0000000001 + shift + hole7Move;
+	platformArrXGrouped[1].splice(12, 1, hole7Left);
+	hole7Right = 3890 + shift;
+	platformArrXGrouped[1].splice(13, 1, hole7Right)
+	flat8Left = 3890.0000000001 + shift;
+	platformArrXGrouped[0].splice(14, 1, flat8Left);
+	flat8Right = 4490 + shift;
+	platformArrXGrouped[0].splice(15, 1, flat8Right);
 
 	ai1left = 2465 + shift + ai1Move;
 	
@@ -544,8 +850,11 @@ const blockmove = () => {
 	it thinks holes are at areas there not. I was thinking i'd have to do two versions
 	of all the moves. I forgot about my shifts though so I probably just need to implement
 	that but*/
+	/*movingPlatAdj();*/
+
+
 	if (right && right2) {
-		console.log(ai1left);
+		
 	
 		if (blockX <= 750) {
 			/*if (blockX + 10 >= ai1left &&  blockX + 10 <= ai1left + 50) {
@@ -563,18 +872,32 @@ const blockmove = () => {
 					} 
 				}	
 			} else {*/
-			console.log(ai1left);
+
+			/*if (hole && nextRight - blockX - 50 < 0) {
+				block.style.left = `${xMaxRight}px`;
+				blockX = xMaxRight;
+			} else {*/
+		if (right3) {	
 		mapMoving = false;
 		x += 10;
 		block.style.left = `${x}px`;
 		blockX = x;
+		}
+		
 		
 	} else {
+		if (right3) {
 	mapMoving = true;
 	xMap -= 10;
 	map.style.left = `${xMap}px`;
 	mapXMap = xMap;
 	platformXPostion(mapXMap);
+} else if (!right3) {
+		mapMoving = true;
+	xMap -= 3;
+	map.style.left = `${xMap}px`;
+	mapXMap = xMap;
+}
 		/*document.body.style.left = xpx or something. And then I'll basically
 		put my entire move functions-if i'm thikning right it might come out
 		different- in if else statements bases on this and if the world is moving
@@ -593,22 +916,28 @@ const blockmove = () => {
 		if (mapXMap >= 0) {
 			mapMoving = false;
 			if (blockX >= 10) {
+				if (left3) {
 		x -= 10;
 		block.style.left = `${x}px`;
 		blockX = x;
+			};
 		};
 	} else if (mapXMap < 0) {
 		if (blockX >= 400) {
+			if (left3) {
 	mapMoving = false;
 	x -= 10;
 	block.style.left = `${x}px`;
-	blockX = x;			
+	blockX = x;
+		};			
 		} else if (blockX < 400) {
+	
 		mapMoving = true;
 		xMap += 10;
 		map.style.left = `${xMap}px`;
 		mapXMap = xMap;
 		platformXPostion(mapXMap);
+		
 	};
 
 
@@ -693,6 +1022,20 @@ const blockmove = () => {
 			hole6MoveL +=3;
 			hole6MoveR -= 3;
 			flat7Move -= 3;
+			hole7Move -= 3;
+			flat6Direction = 1;
+			flat7Direction = 2;/*
+					if (onPlatform) {
+						if (currentPlatIndex === 10) {
+							x += 3;
+							blockX = x;
+							block.style.left = `${x}`;
+						} else if (currentPlatIndex === 12) {
+							x -= 3;
+							blockX = x;
+							block.style.left = `${x}`;
+						};
+					};*/
 			loopCount ++;
 		} else if (loopCount >= 60 && loopCount <= 100) {
 			loopCount++;
@@ -702,6 +1045,9 @@ const blockmove = () => {
 			hole6MoveL = hole6MoveL;
 			hole6MoveR = hole6MoveR;
 			flat7Move = flat7Move;
+			hole7Move = hole7Move;
+			flat6Direction = 0;
+			flat7Direction = 0;
 		} else if (loopCount > 100 && loopCount <= 160) {
 			ai1Move -= 3;
 			flat6Move -= 3;
@@ -709,6 +1055,21 @@ const blockmove = () => {
 			hole6MoveL -=3;
 			hole6MoveR += 3;
 			flat7Move += 3;
+			hole7Move += 3;
+			flat6Direction = 2;
+			flat7Direction = 1;/*
+					if (onPlatform) {
+						if (currentPlatIndex === 10) {
+							x -= 3;
+							blockX = x;
+							block.style.left = `${x}`;
+						} else if (currentPlatIndex === 12) {
+							x += 3;
+							blockX = x;
+							block.style.left = `${x}`;
+						};
+					};*/
+
 			loopCount++;
 		}  else if (loopCount > 160 && loopCount <= 200) {
 			loopCount ++;
@@ -718,11 +1079,134 @@ const blockmove = () => {
 			hole6MoveL = hole6MoveL;
 			hole6MoveR = hole6MoveR;
 			flat7Move = flat7Move;
+			hole7Move = hole7Move;
+			flat6Direction = 0;
+			flat7Direction = 0;
 		} else if (loopCount > 200) {
 			loopCount = 0;
 		}
 	};
 
+
+	if (!mapMoving) {
+		/*ai1Move = 0;*/
+		if (loopCount < 60) {
+			ai1Move += 3;
+			ai1left += 3;
+			flat6Move += 3;
+			flat6Left += 3;
+			flat6Right += 3;
+			flat7Move -= 3;
+			flat7Left -= 3;
+			flat7Right -= 3;
+			hole5Move += 3;
+			hole5Right += 3;
+			hole6MoveL += 3;
+			hole6Left += 3;
+			hole6MoveR -= 3;
+			hole6Right -= 3;
+			hole7Move -=3;
+			hole7Left -=3;
+			/*platformArrXGrouped[1].splice(8, 1, hole5Left);*/
+			platformArrXGrouped[1].splice(9, 1, hole5Right);
+			platformArrXGrouped[0].splice(10, 1, flat6Left);
+			platformArrXGrouped[0].splice(11, 1, flat6Right);
+			platformArrXGrouped[0].splice(12, 1, flat7Left);
+			platformArrXGrouped[0].splice(13, 1, flat7Right);
+			platformArrXGrouped[1].splice(10, 1, hole6Left);
+			platformArrXGrouped[1].splice(11, 1, hole6Right);
+			platformArrXGrouped[1].splice(12, 1, hole7Left);
+			flat6Direction = 1;
+			flat7Direction = 2;/*
+					if (onPlatform) {
+						if (currentPlatIndex === 10) {
+							x += 3;
+							blockX = x;
+							block.style.left = `${x}`;
+						} else if (currentPlatIndex === 12) {
+							x -= 3;
+							blockX = x;
+							block.style.left = `${x}`;
+						};
+					};*/
+
+			loopCount ++;
+		} else if (loopCount >= 60 && loopCount <= 100) {
+			ai1Move = ai1Move;
+			flat6Move = flat6Move;
+			hole5Move = hole5Move;
+			flat7Move = flat7Move;
+			hole6MoveL = hole6MoveL;
+			hole6MoveR = hole6MoveR;
+			hole7Move = hole7Move;
+			flat6Direction = 0;
+			flat7Direction = 0;
+			loopCount++;
+		} else if (loopCount > 100 && loopCount <= 160) {
+			ai1Move -= 3;
+			ai1left -= 3;
+			flat6Move -= 3;
+			flat6Left -= 3;
+			flat6Right -= 3;
+			flat7Move += 3;
+			flat7Left += 3;
+			flat7Right += 3;
+			hole5Move -= 3;
+			//hole5Left -= 3;
+			hole5Right -= 3;
+			hole6MoveL -= 3;
+			hole6Left -= 3;
+			hole6MoveR += 3;
+			hole6Right += 3;
+			hole7Move +=3;
+			hole7Left +=3;
+			//platformArrXGrouped[1].splice(8, 1, hole5Left);
+			platformArrXGrouped[1].splice(9, 1, hole5Right);
+			platformArrXGrouped[0].splice(10, 1, flat6Left);
+			platformArrXGrouped[0].splice(11, 1, flat6Right);			
+			platformArrXGrouped[0].splice(12, 1, flat7Left);
+			platformArrXGrouped[0].splice(13, 1, flat7Right);	
+			platformArrXGrouped[1].splice(10, 1, hole6Left);
+			platformArrXGrouped[1].splice(11, 1, hole6Right);
+			platformArrXGrouped[1].splice(12, 1, hole7Left);
+					/*if (onPlatform) {
+						if (currentPlatIndex === 10) {
+							x -= 3;
+							blockX = x;
+							block.style.left = `${x}`;
+						} else if (currentPlatIndex === 12) {
+							x += 3;
+							blockX = x;
+							block.style.left = `${x}`;
+						};
+					};*/
+
+			flat6Direction = 2;
+			flat7Direction = 1;
+			/*if (!right3) {
+
+			}*/			
+			loopCount++;
+		}  else if (loopCount > 160 && loopCount <= 200) {
+			ai1Move = ai1Move;
+			flat6Move = flat6Move;
+			hole5Move = hole5Move;
+			flat7Move = flat7Move;
+			hole6MoveL = hole6MoveL;
+			hole6MoveR = hole6MoveR;
+			hole7Move = hole7Move;
+			flat6Direction = 0;
+			flat7Direction = 0;
+			loopCount ++;
+		} else if (loopCount > 200) {
+			loopCount = 0;
+		};
+
+	}
+
+	movingPlatAdj();
+
+	
 
 		/*if (mapMoving) {
 		
@@ -819,6 +1303,8 @@ and didn't think about it enough. I'll worry about that later. */
 	};
 };
 	if (up && !up2 && up3) {
+		right2 = true;
+		left2 = true;
 		if (currentY > baseHeight ){
 				console.log('2.1');
 				down = false;
@@ -865,11 +1351,11 @@ and didn't think about it enough. I'll worry about that later. */
 						left2 = true;
 						right2 = true;
 							console.log('2.2.1.1.1.1');
-							if (blockX <= xMaxLeft) {
+							if (blockX <= xMaxLeft && !belowPlatform) {
 								console.log('2.2.1.1.1.1.1');
 								left2 = false;
 								
-							} else if (blockX >= xMaxRight) {
+							} else if (blockX >= xMaxRight && !belowPlatform) {
 								console.log('2.2.1.1.1.1.2');
 								right2 = false;
 								
@@ -887,11 +1373,20 @@ and didn't think about it enough. I'll worry about that later. */
 						if (xMaxLeft > 0) {
 						left2 = true;
 						right2 = true;
-							if (blockX <= xMaxLeft) {
+						/*This works as it should for the moving block when the
+						block is all the way to the left and not moving. The block
+						if it's base is below the platform hits the side and can't
+						move past until the block is fully below and then it can 
+						again and continues dropping. I can't get it to work while
+						its moving though and i'm pretty sure it's because the movments
+						of 3 and 10 don't match up. I'm trying to work out something to
+						fix it in either the block x move part or the next right and
+						current plat y part but I haven't been able to make it work yet.*/
+							if (blockX <= xMaxLeft && !belowPlatform) {
 								console.log('3.3.1');
 								left2 = false;
 								
-							} else if (blockX >= xMaxRight) {
+							} else if (blockX >= xMaxRight && !belowPlatform) {
 								console.log('3.3.2');
 								right2 = false;
 								
@@ -924,6 +1419,8 @@ and didn't think about it enough. I'll worry about that later. */
 	};
 
 	if (!up && up3) { console.log('also three something');
+		right2 = true;
+		left2 = true;
 		
 		if (currentY > baseHeight && down === false) {
 			
@@ -1004,7 +1501,7 @@ and didn't think about it enough. I'll worry about that later. */
 			for maybe 30 minutes trying to figure out why. I'm still not sure but
 			I'm going to think about it latter. I don't see why it would ever execute
 		on the first frame.*/
-			if (hole === true && blockX !== 0) {
+			if (hole && blockX !== 0) {
 				console.log('3.3');
 				y -= 10;
 				block.style.bottom = `${heightCheck[0] + y}px`;
@@ -1070,6 +1567,8 @@ where it needs to you don't really need it to reset. If you do it causes problem
  	y = 0;
 	left2 = true;
 	right2 = true;
+	right3 = true;
+	left3 = true;
 	up3 = true;
 	down = true;
 	currentY = 200;
@@ -1146,78 +1645,7 @@ when it restarts. I'm assuming because the animation loop can't get called.*/
 				
 				bHCall();
 
-	if (!mapMoving) {
-		/*ai1Move = 0;*/
-		if (loopCount < 60) {
-			ai1Move += 3;
-			ai1left += 3;
-			flat6Move += 3;
-			flat6Left += 3;
-			flat6Right += 3;
-			flat7Move -= 3;
-			flat7Left -= 3;
-			flat7Right -= 3;
-			hole5Move += 3;
-			hole5Right += 3;
-			hole6MoveL += 3;
-			hole6Left += 3;
-			hole6MoveR -= 3;
-			hole6Right -= 3;
-			/*platformArrXGrouped[1].splice(8, 1, hole5Left);*/
-			platformArrXGrouped[1].splice(9, 1, hole5Right);
-			platformArrXGrouped[0].splice(10, 1, flat6Left);
-			platformArrXGrouped[0].splice(11, 1, flat6Right);
-			platformArrXGrouped[0].splice(12, 1, flat7Left);
-			platformArrXGrouped[0].splice(13, 1, flat7Right);
-			platformArrXGrouped[1].splice(10, 1, hole6Left);
-			platformArrXGrouped[1].splice(11, 1, hole6Right);
-			loopCount ++;
-		} else if (loopCount >= 60 && loopCount <= 100) {
-			ai1Move = ai1Move;
-			flat6Move = flat6Move;
-			hole5Move = hole5Move;
-			flat7Move = flat7Move;
-			hole6MoveL = hole6MoveL;
-			hole6MoveR = hole6MoveR;
-			loopCount++;
-		} else if (loopCount > 100 && loopCount <= 160) {
-			ai1Move -= 3;
-			ai1left -= 3;
-			flat6Move -= 3;
-			flat6Left -= 3;
-			flat6Right -= 3;
-			flat7Move += 3;
-			flat7Left += 3;
-			flat7Right += 3;
-			hole5Move -= 3;
-			//hole5Left -= 3;
-			hole5Right -= 3;
-			hole6MoveL -= 3;
-			hole6Left -= 3;
-			hole6MoveR += 3;
-			hole6Right += 3;
-			//platformArrXGrouped[1].splice(8, 1, hole5Left);
-			platformArrXGrouped[1].splice(9, 1, hole5Right);
-			platformArrXGrouped[0].splice(10, 1, flat6Left);
-			platformArrXGrouped[0].splice(11, 1, flat6Right);			
-			platformArrXGrouped[0].splice(12, 1, flat7Left);
-			platformArrXGrouped[0].splice(13, 1, flat7Right);	
-			platformArrXGrouped[1].splice(10, 1, hole6Left);
-			platformArrXGrouped[1].splice(11, 1, hole6Right);			
-			loopCount++;
-		}  else if (loopCount > 160 && loopCount <= 200) {
-			ai1Move = ai1Move;
-			flat6Move = flat6Move;
-			hole5Move = hole5Move;
-			flat7Move = flat7Move;
-			hole6MoveL = hole6MoveL;
-			hole6MoveR = hole6MoveR;
-			loopCount ++;
-		} else if (loopCount > 200) {
-			loopCount = 0;
-		};
 
-	}
 	/*There's more scenarios where the block could fall on the ai's head but in this
 	scenario not really so i'm going to try it like this first*/
 
@@ -1249,6 +1677,8 @@ when it restarts. I'm assuming because the animation loop can't get called.*/
 
 		}
 	};
+
+
 
 
 
@@ -1296,7 +1726,19 @@ when it restarts. I'm assuming because the animation loop can't get called.*/
 /*${baseHeight} ${currentPlatY} ${currentY} ${nextLeft} 
 ${xMaxLeft} ${nextRight} ${xMaxRight} ${baseHeight} ${hole} ${inAir}${platformArrXGrouped[0][2]} ${currentY} ${currentPlatY} ${ai1.style.left}
 ${ai1left} ${blockX} ${loopCount} ${ai1Move} ${currentY}*/
-	what.innerHTML = `${belowPlatform} ${platformArrXGrouped[1][8]} ${platformArrXGrouped[1][9]} ${flat6Left} ${base6.style.left} ${hole} `;
+	what.innerHTML = `${mapMoving} ${flat6Right} ${flat6Direction} ${blockX} ${platformArrXGrouped[0][10]} ${platformArrB[5]} ${nextRight} ${xMaxRight} ${hole} ${currentPlatY} ${belowPlatform} ${platformArrXGrouped[1][8]} ${platformArrXGrouped[1][9]} ${flat6Left} ${base6.style.left} ${hole} `;
+console.log(blockX);
+console.log(platformArrXGrouped[0][11]);
+console.log(flat6Right);
+console.log(flat7Left);
+console.log(platformArrXGrouped[0][12]);
+console.log(flat7Right);
+console.log(belowPlatform);
+console.log(hole);
+console.log(currentY);
+console.log(platformArrB[5]);
+console.log(left3);
+console.log(right3);
 /*
 console.log(baseHeight);
 console.log(block.style.bottom);
@@ -1316,7 +1758,7 @@ console.log(mapXMap);
 console.log(xMaxRight);
 console.log(ai1left);
 console.log(mapMoving);*/
-console.log(hitAnimation);
+
 
 
 
