@@ -404,7 +404,7 @@ const movingPlatAdj = (var1, var2) => {
 		if (flat6Left -.0000000001 - blockX < 50 && flat6Left - .0000000001 
 			- blockX > 40 && flat6Direction === 0) {
 			console.log('6.1.1');
-	what2.innerHTML = 'what';		
+			
 			blockX = flat6Left - 50;
 			block.style.left = `${blockX}px`
 			platformArrXGrouped[0].splice(10, 1, flat6Left);
@@ -412,12 +412,12 @@ const movingPlatAdj = (var1, var2) => {
 			
 		} else if (flat6Left -.0000000001 - blockX < 50 && flat6Left - .0000000001 
 			-blockX > 40 && flat6Direction === 2) {
-			what2.innerHTML = 'what';
+		
 			blockX = flat6Left - 50;
 			block.style.left = `${blockX}px`
 			platformArrXGrouped[0].splice(10, 1, flat6Left);
 			right3 = false;
-			xChange = true;
+			
 			console.log('6.1.2');
 
 
@@ -431,14 +431,15 @@ applies while any of these are excecuting.*/
 			-blockX > 40 && flat6Direction === 1 && right) {
 
 			
-			what2.innerHTML = 'what';
+		
 			blockX = flat6Left - 50;
+			x = blockX;
 			block.style.left = `${blockX}px`
 			platformArrXGrouped[0].splice(10, 1, flat6Left);
 			right3 = false;
 			/*mapXMap -= 3;
 			map.style.left = `${mapXMap}px`;*/
-			mapMoving = false;
+			
 		
 			console.log('6.1.3');
 		} else if (blockX - flat6Right <= 0  && blockX - flat6Right > - 20 && flat6Direction
@@ -446,7 +447,7 @@ applies while any of these are excecuting.*/
 			console.log('6.2.1');
  			blockX = flat6Right;
 			block.style.left = `${blockX}px`;
-			what2.innerHTML = `${blockX} ${flat6Right}`;
+			
 			platformArrXGrouped[0].splice(11, 1, flat6Right);
 			left3 = false;
 			/*I put three in the below because when left3 = false the platform
@@ -463,12 +464,12 @@ applies while any of these are excecuting.*/
 			block.style.left = `${blockX}px`;
 			platformArrXGrouped[0].splice(11, 1, flat6Right);
 			left3 = false;
-			mapMoving = false;	
+				
 
 		 } else if (blockX - flat6Right <= 0 && blockX - flat6Right > -20 && flat6Direction
 			=== 0) {
 		 	console.log('6.2.3');
-		 	what2.innerHTML = 'what';
+		 	
 			blockX = flat6Right;
 			block.style.left = `${blockX}px`;
 			platformArrXGrouped[0].splice(11, 1, flat6Right);
@@ -477,7 +478,7 @@ applies while any of these are excecuting.*/
 		} else if (Math.floor(flat7Left) - blockX <= 50 && Math.floor(flat7Left)
 			-blockX > 40 && flat7Direction === 0) {
 			console.log('7.1.1');
-			what2.innerHTML = 'what';		
+					
 			blockX = flat7Left - 50;
 			block.style.left = `${blockX}px`
 			platformArrXGrouped[0].splice(12, 1, flat7Left);
@@ -486,7 +487,7 @@ applies while any of these are excecuting.*/
 		} else if (Math.floor(flat7Left) - blockX <= 50 && Math.floor(flat7Left) 
 			-blockX > 40 && flat7Direction === 2) {
 			console.log('7.1.2');
-			what2.innerHTML = 'what';
+			
 			blockX = flat7Left - 50;
 			block.style.left = `${blockX}px`
 			platformArrXGrouped[0].splice(12, 1, flat7Left);
@@ -496,20 +497,20 @@ applies while any of these are excecuting.*/
 		} else if (Math.floor(flat7Left) - blockX <= 53 && Math.floor(flat7Left) 
 			- blockX > 40 && flat7Direction === 1 && right) {
 			console.log('7.1.3');
-			mapMoving = false;
-			what2.innerHTML = 'what';
+			
+			
 			blockX = flat7Left - 50;
 			block.style.left = `${blockX}px`
 			platformArrXGrouped[0].splice(12, 1, flat7Left);
 			right3 = false;
-			mapMoving = false;
+			
 
 		} else if (blockX - flat7Right <= 0  && blockX - flat7Right > - 20 && flat7Direction
 			=== 1) {
 			console.log('7.2.1');
  			blockX = flat7Right;
 			block.style.left = `${blockX}px`;
-			what2.innerHTML = `${blockX} ${flat7Right}`;
+			
 			platformArrXGrouped[0].splice(13, 1, flat7Right);
 			left3 = false;
 
@@ -520,12 +521,12 @@ applies while any of these are excecuting.*/
 			block.style.left = `${blockX}px`;
 			platformArrXGrouped[0].splice(13, 1, flat7Right);
 			left3 = false;	
-			mapMoving = false;
+			
 
 		 } else if (blockX - flat7Right <= 0 && blockX - flat7Right > -20 && flat7Direction
 			=== 0) {
 		 	console.log('7.2.3');
-		 	what2.innerHTML = 'what';
+		 	
 			blockX = flat7Right;
 			block.style.left = `${blockX}px`;
 			platformArrXGrouped[0].splice(13, 1, flat7Right);
@@ -537,30 +538,43 @@ applies while any of these are excecuting.*/
 			right3 = true;
 		}
 	} else {
-		console.log('8');
-		blockXAdj = blockX - x;
 		for (let i = 0; i < 10; i ++ ) {
+			
 			if (x % 10 === i) {
+
 				if (right || left) {
+					if (!onPlatform) {
+					
+				
 				x = x - i;
-				}; 
+				blockX = x;
+				block.style.left = `${x}px`;
+				 }
+				}
 			};
 
-			if (xMap % 10 === i) {
+			if (xMap % 10 === - i) {
 				if (right || left) {
-					xMap = xMap - i;
+					if (!onPlatform) {
+					xMap = xMap + i;
+					mapXMap = xMap;
+					map.style.left = `${xMap}px`;
+					platformXPostion(xMap);
+					}
 				}
 			};
 		};
 		console.log(blockXAdj);
+		right3 = true;
+		left3 = true;
 
-		x = x + blockXAdj;
+	/*	x = x + blockXAdj;
 		blockX = x;
 		block.style.left = `${x}px`;
 		console.log(x);
 		right3 = true;
 		left3 = true;
-		blockXAdj = 0;
+		blockXAdj = 0;*/
 	};
 
 };
@@ -656,6 +670,8 @@ const platformXPostion = (shift) => {
 const blockmove = () => {
 
 
+
+
 		onPlatformHeight();
 		getCurrentY();
 		closestPlatformLeft();
@@ -676,11 +692,11 @@ const blockmove = () => {
 	if (right && right2) {
 	
 		if (blockX <= 750) {
-			what2.innerHTML = 'yes';
+			
 
 		if (right3) {	
 		mapMoving = false;
-		x += 10 - x % 10;
+		x += 10;
 		block.style.left = `${x}px`;
 		blockX = x;
 		}
@@ -780,12 +796,13 @@ const blockmove = () => {
 				flat7Direction = 2;
 					if (onPlatform) {
 						if (currentPlatIndex === 10) {
-							if (blockX <= 750) {
+							if (blockX < 760) {
+								
 							mapMoving = false;
 							x += 3;
 							blockX = x;
-							block.style.left = `${x}`;
-						}	else if (blockX > 750) {
+							block.style.left = `${x}px`;
+						}	else if (blockX >= 760) {
 								mapMoving = true;
 								xMap -= 3;
 								map.style.left = `${xMap}px`;
@@ -794,10 +811,11 @@ const blockmove = () => {
 							}
 						} else if (currentPlatIndex === 12) {
 							if (blockX >= 400) {
+								
 							mapMoving = false
 							x -= 3;
 							blockX = x;
-							block.style.left = `${x}`;
+							block.style.left = `${x}px`;
 						} else if (blockX < 400) {
 							mapMoving = true;
 							xMap += 3;
@@ -835,10 +853,11 @@ const blockmove = () => {
 					if (onPlatform) {
 						if (currentPlatIndex === 10) {
 							if (blockX >= 400) {
+								
 							mapMoving = false
 							x -= 3;
 							blockX = x;
-							block.style.left = `${x}`;
+							block.style.left = `${x}px`;
 						} else if (blockX < 400) {
 							mapMoving = true;
 							xMap += 3;
@@ -847,13 +866,14 @@ const blockmove = () => {
 							platformXPostion(mapXMap);
 						};
 						} else if (currentPlatIndex === 12) {
-							if (blockX <= 750) {
+							if (blockX < 760) {
+								
 								mapMoving = false;
 								x += 3;
 							
 							blockX = x;
-							block.style.left = `${x}`;
-						}	else if (blockX > 750) {
+							block.style.left = `${x}px`;
+						}	else if (blockX >= 760) {
 								mapMoving = true;
 								xMap -= 3;
 								map.style.left = `${xMap}px`;
@@ -888,6 +908,7 @@ const blockmove = () => {
 		/*ai1Move = 0;*/
 		
 		if (loopCount < 60) {
+
 			ai1Move += 3;
 			ai1left += 3;
 			flat6Move += 3;
@@ -904,13 +925,14 @@ const blockmove = () => {
 			flat7Direction = 2;
 					if (onPlatform) {
 						if (currentPlatIndex === 10) {
-							if (blockX <= 750) {
+							if (blockX < 760) {
+							
 							mapMoving = false;
 							x += 3;
 							blockX = x;
-							block.style.left = `${x}`;
+							block.style.left = `${x}px`;
 						}
-							else if (blockX > 750) {
+							else if (blockX >= 760) {
 								mapMoving = true;
 								xMap -= 3;
 								map.style.left = `${xMap}px`;
@@ -919,10 +941,11 @@ const blockmove = () => {
 							};
 						} else if (currentPlatIndex === 12) {
 							if (blockX >= 400) {
+								
 							mapMoving = false
 							x -= 3;
 							blockX = x;
-							block.style.left = `${x}`;
+							block.style.left = `${x}px`;
 						} else if (blockX < 400) {
 							mapMoving = true;
 							xMap += 3;
@@ -935,6 +958,8 @@ const blockmove = () => {
 
 			loopCount ++;
 		} else if (loopCount >= 60 && loopCount <= 100) {
+
+
 			ai1Move = ai1Move;
 			flat6Move = flat6Move;
 			hole5Move = hole5Move;
@@ -946,15 +971,12 @@ const blockmove = () => {
 			flat7Direction = 0;
 			loopCount++;
 		} else if (loopCount > 100 && loopCount <= 160) {
+
 			ai1Move -= 3;
 			ai1left -= 3;
 			flat6Move -= 3;
-			
-			
 			flat7Move += 3;
-
 			hole5Move -= 3;
-			//hole5Left -= 3;
 			hole5Right -= 3;
 			hole6MoveL -= 3;
 			hole6Left -= 3;
@@ -965,10 +987,11 @@ const blockmove = () => {
 				if (onPlatform) {
 					if (currentPlatIndex === 10) {
 						if (blockX >= 400) {
+						
 						mapMoving = false
 						x -= 3;
 						blockX = x;
-						block.style.left = `${x}`;
+						block.style.left = `${x}px`;
 					} else if (blockX < 400) {
 						mapMoving = true;
 						xMap += 3;
@@ -978,13 +1001,14 @@ const blockmove = () => {
 					};	
 
 					} else if (currentPlatIndex === 12) {
-						if (blockX <= 750) {
+						if (blockX < 760) {
+							
 						mapMoving = false;
 						x += 3;
 						blockX = x;
-						block.style.left = `${x}`;
+						block.style.left = `${x}px`;
 					}
-						else if (blockX > 750) {
+						else if (blockX >= 760) {
 							mapMoving = true;
 							xMap -= 3;
 							map.style.left = `${xMap}px`;
@@ -998,6 +1022,12 @@ const blockmove = () => {
 			flat7Direction = 1;		
 			loopCount++;
 		}  else if (loopCount > 160 && loopCount <= 200) {
+			/*if (xMap % 10 !== 0) {
+				xMap = xMap - (xMap % 10);
+				mapXMap = xMap;
+				map.style.left = `${xMap}px`;
+				platformXPostion(xMap);
+			}*/
 			ai1Move = ai1Move;
 			flat6Move = flat6Move;
 			hole5Move = hole5Move;
@@ -1308,26 +1338,19 @@ your jumping in various cercumstances. */
 	base6.style.left = `${flat6Left}px`;
 	base7.style.left = `${flat7Left}px`;
 
-	what.innerHTML = `${loopCount} ${flat6Direction} ${blockX} ${flat6Left} ${flat6Move} ${currentY} ${flat6Top} ${belowPlatform} ${xMaxRight} ${onPlatform} ${currentPlatIndex} ${hole} ${blockXAdj}`;
+	what.innerHTML = `${mapMoving} ${blockX} ${x}  ${xMap} ${currentPlatIndex} ${onPlatform} ${xMaxLeft} ${belowPlatform} ${left2} ${hole}`;
 
-console.log(loopCount);
+
 console.log(blockX);
 console.log(x);
-console.log(blockXAdj);
-console.log(currentY);
-console.log(onPlatform);
+console.log(currentY)
+console.log(platformArrXGrouped[0][9]);
+console.log(xMaxLeft);
 console.log(belowPlatform);
-console.log(xMap);
 console.log(mapXMap);
-console.log(flat6Right);
-console.log(flat7Left);
-console.log(flat7Right);
-console.log(hole);
 console.log(left2);
-console.log(right2);
-console.log(left3);
-console.log(right3);
-console.log(platformArrB[5]);
+console.log(hole);
+
 
 
 	if (!hitAnimation) {
