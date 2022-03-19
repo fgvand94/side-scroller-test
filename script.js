@@ -540,31 +540,44 @@ applies while any of these are excecuting.*/
 	} else {
 		for (let i = 0; i < 10; i ++ ) {
 			
-			if (x % 10 === i) {
+			if (x % 10 === i && x % 10 !== 0) {
 
-				if (right || left) {
+				if (right) {
 					if (!onPlatform) {
 					
 				
-				x = x - i;
+				x = x + 10 - i;
 				blockX = x;
 				block.style.left = `${x}px`;
 				 }
-				}
-			};
-
-			if (xMap % 10 === - i) {
-				if (right || left) {
+				} else if (left) {
 					if (!onPlatform) {
-					xMap = xMap + i;
+						x = x - i;
+						blockX = x;
+						block.style.left = `${x}px`;
+					}
+				}
+			}
+
+			if (xMap % 10 === - i && xMap % 10 !== 0) {
+				if (right) {
+					if (!onPlatform) {
+					xMap = xMap -10 + i;
 					mapXMap = xMap;
 					map.style.left = `${xMap}px`;
 					platformXPostion(xMap);
 					}
+				} else if (left) {
+					if (!onPlatform) {
+						xMap = xMap + i;
+						mapXMap = xMap;
+						map.style.left = `${xMap}px`;
+						platformXPostion(xMap);						
+					}
 				}
 			};
 		};
-		console.log(blockXAdj);
+
 		right3 = true;
 		left3 = true;
 
@@ -689,9 +702,37 @@ const blockmove = () => {
 	
 
 	/*determains the movement of the block and map to the right in various cercumstances*/
+		/*Tryiing to make sense of what i'm seeing in the console as far as the jerkiness
+		goes. I thought it was basically only when I jump. It seems that way. However in
+		the console I see strange behavior before the jump in some cases. I switched
+		the right to < 760 because not everything goes in 10's now so that makes more sense
+		I doubt that will fix everything. what i'm seeing though is x is at 762. It shouldn't
+		be but x shifted up 3 from 759 I beleieve before map moving went false and the other
+		platform move function happened. I made a function that should fix that. But anyway
+		It goes from 762 and -2431 for xmap. this is when the plat is all the way to the 
+		right. next fram 762 and 2441 so I must have started moving then and since I was
+		above 750 the map moved. whats strange is the next fram. x is 756 and xmap is 2451.
+		idk why it moved 6. I hadn't jumped yet. what's really happenining on these platforms
+		is that the right/ left functions trigger so either you or the map goes over ten.
+		then the platform moves so if it's the oposite direction you go back by three. 
+		then jump triggers. so if  you jump the plat adjust won't do the smooth ouut to 
+		tens until the next frame and after the platform and origional block move have happened.
+		just this might be part of the jerky look. So rearanging things and maybe making more
+		complex logic where if your on a moving platform and moving you move by 10 - 3 instead
+		of having them happen in distinct steps. The strange thing though is still the 6 move.
+		it happened two frames in a row before a jump triggered even. and both above
+		760. I have no idea why. when I do jump the first frame xmap is the same 2461 before
+		jump and then on jump 2461 again at 210 and then after the next frame when the
+		adjust triggers it jumps to 2480. I have it set - 10 + i for right and just + i
+		for left. What would be better is to base that off of which side of 5 it was on
+		so it would adjust either up or down in the smoothest way. cause ideally that would
+		have gone 2461 2470 not 2461 2480. I still don't know exactly why it adjusted six
+		but i'm pretty sure that the jerkiness is a combination of a bunch of those little
+		things mentioned above.  */ 
+	
 	if (right && right2) {
 	
-		if (blockX <= 750) {
+		if (blockX < 760) {
 			
 
 		if (right3) {	
@@ -705,7 +746,7 @@ const blockmove = () => {
 	} else {
 		if (right3) {
 			mapMoving = true;
-			xMap -= 10 + xMap % 10;
+			xMap -= 10;
 			map.style.left = `${xMap}px`;
 			mapXMap = xMap;
 			platformXPostion(mapXMap);
@@ -1332,6 +1373,13 @@ your jumping in various cercumstances. */
 		}
 	};
 
+	if (x > 760) {
+		let adjust = x - 760;
+		xMap = xMap - adjust;
+	};
+
+
+
 
 
 	ai1.style.left = `${ai1left}px`;
@@ -1341,15 +1389,11 @@ your jumping in various cercumstances. */
 	what.innerHTML = `${mapMoving} ${blockX} ${x}  ${xMap} ${currentPlatIndex} ${onPlatform} ${xMaxLeft} ${belowPlatform} ${left2} ${hole}`;
 
 
-console.log(blockX);
+
 console.log(x);
+console.log(xMap);
 console.log(currentY)
-console.log(platformArrXGrouped[0][9]);
-console.log(xMaxLeft);
-console.log(belowPlatform);
-console.log(mapXMap);
-console.log(left2);
-console.log(hole);
+
 
 
 
